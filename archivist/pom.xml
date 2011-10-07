@@ -261,9 +261,10 @@
                   <exclude>org.avaje:ebean</exclude>
                   <exclude>org.bukkit:craftbukkit</exclude>
                   <exclude>org.jukito:jukito</exclude>
-                  <exclude>org.mockito:mockito-core</exclude>
+                  <!--<exclude>org.mockito:mockito-core</exclude>-->
                   <exclude>org.yaml:snakeyaml</exclude>
                   <exclude>javax.persistence:persistence-api</exclude>
+                  <exclude>com.googlecode.json-simple:json-simple</exclude>
                 </excludes>
               </artifactSet>
             </configuration>
@@ -441,6 +442,8 @@
               <excludes>
                 <exclude>.git/**</exclude>
                 <exclude>**/*.json</exclude>
+                <exclude>**/*.yml</exclude>
+                <exclude>**/*.properties</exclude>
               </excludes>
             </configuration>
             <executions>
