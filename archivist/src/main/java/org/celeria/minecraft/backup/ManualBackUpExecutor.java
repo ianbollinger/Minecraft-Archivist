@@ -16,14 +16,16 @@
 
 package org.celeria.minecraft.backup;
 
+import javax.annotation.concurrent.Immutable;
 import com.google.inject.Inject;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.celeria.minecraft.guice.TaskScheduler;
 
+@Immutable
 class ManualBackUpExecutor implements CommandExecutor {
-    private TaskScheduler scheduler;
-    private BackUpWorldsTask task;
+    private final TaskScheduler scheduler;
+    private final BackUpWorldsTask task;
 
     @Inject
     ManualBackUpExecutor(final TaskScheduler scheduler,

@@ -16,6 +16,9 @@
 
 package org.celeria.minecraft.backup;
 
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 class WorldTaskException extends RuntimeException {
     private static final long serialVersionUID = 7380672278837956854L;
 

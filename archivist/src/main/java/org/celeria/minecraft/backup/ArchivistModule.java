@@ -20,6 +20,7 @@ import static org.joda.time.DateTimeFieldType.*;
 import java.io.File;
 import java.util.List;
 import java.util.zip.*;
+import javax.annotation.concurrent.Immutable;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.*;
 import com.google.inject.throwingproviders.*;
@@ -36,6 +37,7 @@ import org.celeria.minecraft.guice.BukkitPlugin;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.format.*;
 
+@Immutable
 class ArchivistModule extends AbstractModule {
     private static final int TEMPORARY_FOLDER_ATTEMPTS = 10000;
 

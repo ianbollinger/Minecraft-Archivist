@@ -21,17 +21,18 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.io.*;
 import java.lang.annotation.*;
 import java.util.zip.*;
+import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
 import org.apache.commons.vfs2.*;
 import org.bukkit.World;
 import org.slf4j.cal10n.LocLogger;
 
+@Immutable
 class ArchiveWorldTask implements WorldTask {
     @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
     public @interface WorldFolder {}
     @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
     public @interface TemporaryFolder {}
-
     @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
     public @interface TemporaryWorldFolder {}
 

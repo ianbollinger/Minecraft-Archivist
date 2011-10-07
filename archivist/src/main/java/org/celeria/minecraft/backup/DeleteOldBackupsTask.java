@@ -19,12 +19,14 @@ package org.celeria.minecraft.backup;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.*;
+import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
 import org.apache.commons.vfs2.*;
 import org.celeria.minecraft.backup.BackUpWorldsTask.BackupFolder;
 import org.celeria.minecraft.backup.ConfigurationModule.DurationToKeepBackups;
 import org.slf4j.cal10n.LocLogger;
 
+@Immutable
 class DeleteOldBackupsTask implements Runnable {
     @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
     public @interface CurrentTime {}

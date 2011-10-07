@@ -20,6 +20,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.*;
 import java.util.*;
+import javax.annotation.concurrent.Immutable;
 import com.google.common.collect.*;
 import com.google.inject.*;
 import com.google.inject.throwingproviders.CheckedProvides;
@@ -30,12 +31,10 @@ import org.bukkit.util.config.Configuration;
 import org.celeria.minecraft.backup.Archivist.*;
 import org.celeria.minecraft.backup.BackUpWorldsTask.*;
 
+@Immutable
 class ConfigurationModule extends AbstractModule {
-    @BindingAnnotation
-    @Target({FIELD, PARAMETER, METHOD})
-    @Retention(RUNTIME)
-    public @interface DurationToKeepBackups {
-    }
+    @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
+    public @interface DurationToKeepBackups {}
 
     private static final int DEFAULT_BACK_UP_INTERVAL = 3600 * 20;
     private static final int DEFAULT_DURATION_TO_KEEP_BACKUPS = 5 * 1000 * 60

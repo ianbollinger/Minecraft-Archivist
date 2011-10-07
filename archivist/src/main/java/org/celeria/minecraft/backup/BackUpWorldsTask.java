@@ -19,12 +19,14 @@ package org.celeria.minecraft.backup;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.*;
+import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
 import org.apache.commons.vfs2.*;
 import org.bukkit.*;
 import org.celeria.minecraft.guice.TaskScheduler;
 import org.slf4j.cal10n.LocLogger;
 
+@Immutable
 public class BackUpWorldsTask implements Runnable {
     @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
     public @interface BackUpEndedMessage {}

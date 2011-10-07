@@ -143,9 +143,7 @@
     <!-- invalid <module name="OneStatementPerLine"/> -->
 
     <!-- <module name="AvoidStarImport"/> -->
-    <module name="AvoidStaticImport">
-      <property name="excludes" value="org.junit.Assert.*, org.mockito.Mockito.*"/>
-    </module>
+    <!-- <module name="AvoidStaticImport"/> -->
 
     <module name="IllegalImport"/>
     <module name="RedundantImport"/>
@@ -184,10 +182,12 @@
     </module>
     <module name="ArrayTypeStyle"/>
     <module name="FinalParameters"/>
+    <!--
     <module name="Indentation">
       <property name="caseIndent" value="0"/>
-
     </module>
+    -->
+
     <module name="TrailingComment"/>
     <!-- invalid <module name="OuterTypeFilename"/> -->
 

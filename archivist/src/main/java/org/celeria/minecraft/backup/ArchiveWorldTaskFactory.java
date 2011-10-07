@@ -18,6 +18,7 @@ package org.celeria.minecraft.backup;
 
 import java.io.*;
 import java.util.zip.*;
+import javax.annotation.concurrent.Immutable;
 import com.google.inject.Inject;
 import org.apache.commons.vfs2.*;
 import org.bukkit.World;
@@ -27,6 +28,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.cal10n.LocLogger;
 
+@Immutable
 class ArchiveWorldTaskFactory implements WorldTaskFactory {
     private final LocLogger log;
     private final Checksum checksum;
