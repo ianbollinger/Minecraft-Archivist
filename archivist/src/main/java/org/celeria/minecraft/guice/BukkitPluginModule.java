@@ -24,7 +24,6 @@ import org.bukkit.Server;
 import org.bukkit.plugin.*;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.config.Configuration;
-import org.celeria.minecraft.guice.BukkitPlugin.PluginVersion;
 import org.slf4j.cal10n.*;
 
 @Immutable

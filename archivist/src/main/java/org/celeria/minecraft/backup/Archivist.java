@@ -23,6 +23,7 @@ import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
 import org.bukkit.command.*;
 import org.celeria.minecraft.guice.BukkitPlugin;
+import org.celeria.minecraft.guice.PluginVersion;
 import org.celeria.minecraft.guice.TaskScheduler;
 import org.slf4j.cal10n.LocLogger;
 
