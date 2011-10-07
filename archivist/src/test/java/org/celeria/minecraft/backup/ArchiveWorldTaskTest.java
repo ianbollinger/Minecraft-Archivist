@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 import org.apache.commons.vfs2.*;
 import org.bukkit.World;
@@ -37,13 +36,12 @@ public class ArchiveWorldTaskTest {
     public static class Module extends JukitoModule {
         @Override
         protected void configureTest() {
-            bind(World.class).annotatedWith(Assisted.class).toInstance(
-                    mock(World.class));
+            bind(World.class).toInstance(mock(World.class));
         }
     }
 
     @Inject private ArchiveWorldTask task;
-    @Inject @Assisted private World world;
+    @Inject private World world;
     @Inject @WorldFolder private FileObject worldFolder;
     @Inject @TemporaryWorldFolder private FileObject temporaryWorldFolder;
     @Inject private ZipOutputStream archive;

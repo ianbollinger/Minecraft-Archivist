@@ -1,0 +1,17 @@
+name: ${project.name}
+main: org.celeria.minecraft.backup.ArchivistPlugin
+author: Ian D. Bollinger
+version: ${project.version}
+description: ${project.description}
+website: ${project.url}
+
+commands:
+  backup:
+    description: Manually trigger a back up.
+#    permission: archivist.backup
+    usage: /<command>
+
+#permissions:
+#  archivist.backup:
+#    description: Allows player to manually trigger a back up.
+#    default: false

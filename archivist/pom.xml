@@ -267,6 +267,8 @@
                   <exclude>org.bukkit:craftbukkit</exclude>
                   <exclude>org.jukito:jukito</exclude>
                   <exclude>org.mockito:mockito-core</exclude>
+                  <exclude>org.yaml:snakeyaml</exclude>
+                  <exclude>org.avajee:ebean</exclude>
                 </excludes>
               </artifactSet>
             </configuration>
