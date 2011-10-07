@@ -395,7 +395,6 @@
             <version>2.4</version>
             <configuration>
               <format>xml</format>
-              <quiet>true</quiet>
             </configuration>
             <executions>
               <execution>
