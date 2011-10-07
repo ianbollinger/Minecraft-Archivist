@@ -47,8 +47,9 @@ public class ArchivistPluginTest {
     public void setUp() throws Exception {
         setFieldTo(plugin, "config", configuration);
         setFieldTo(plugin, "server", server);
+        // TODO: make path less stupid.
         final Reader reader = Files.newReader(new File(
-                "./src/main/resources/plugin.yml"), Charsets.UTF_8);
+                "target/classes/plugin.yml"), Charsets.UTF_8);
         when(server.getScheduler()).thenReturn(scheduler);
         when(server.getPluginManager()).thenReturn(pluginManager);
         when(server.getPluginCommand("backup")).thenReturn(pluginCommand);

@@ -22,7 +22,6 @@ import java.io.*;
 import java.lang.annotation.*;
 import java.util.zip.*;
 import com.google.inject.*;
-import com.google.inject.assistedinject.Assisted;
 import org.apache.commons.vfs2.*;
 import org.bukkit.World;
 import org.slf4j.cal10n.LocLogger;
@@ -47,7 +46,7 @@ class ArchiveWorldTask implements WorldTask {
     ArchiveWorldTask(final LocLogger log,
             @WorldFolder final FileObject worldFolder,
             @TemporaryWorldFolder final FileObject temporaryWorldFolder,
-            final ZipOutputStream archive, @Assisted final World world) {
+            final ZipOutputStream archive, final World world) {
         this.log = log;
         this.world = world;
         this.worldFolder = worldFolder;
