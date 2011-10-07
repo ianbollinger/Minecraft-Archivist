@@ -66,8 +66,6 @@ public class ArchivistTest {
                 backUpInterval);
     }
 
-    @Ignore
-    @Test
     public void shouldSetManualBackUpExecutor() {
         assertSame(manualBackUpExecutor, pluginCommand.getExecutor());
     }
