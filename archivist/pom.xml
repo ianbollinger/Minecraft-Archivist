@@ -263,6 +263,7 @@
                   <exclude>org.jukito:jukito</exclude>
                   <exclude>org.mockito:mockito-core</exclude>
                   <exclude>org.yaml:snakeyaml</exclude>
+                  <exclude>javax.persistence:persistence-api</exclude>
                 </excludes>
               </artifactSet>
             </configuration>
@@ -355,6 +356,7 @@
             </executions>
           </plugin>
 
+          <!--
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>javancss-maven-plugin</artifactId>
@@ -370,6 +372,7 @@
               </execution>
             </executions>
           </plugin>
+          -->
 
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
