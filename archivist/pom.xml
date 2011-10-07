@@ -261,6 +261,7 @@
            <configuration>
               <artifactSet>
                 <excludes>
+                  <exclude>com.avajee:ebean</exclude>
                   <exclude>com.google.code.findbugs:*</exclude>
                   <exclude>com.google.guava:guava</exclude>
                   <exclude>junit:junit</exclude>
@@ -268,7 +269,6 @@
                   <exclude>org.jukito:jukito</exclude>
                   <exclude>org.mockito:mockito-core</exclude>
                   <exclude>org.yaml:snakeyaml</exclude>
-                  <exclude>org.avajee:ebean</exclude>
                 </excludes>
               </artifactSet>
             </configuration>
