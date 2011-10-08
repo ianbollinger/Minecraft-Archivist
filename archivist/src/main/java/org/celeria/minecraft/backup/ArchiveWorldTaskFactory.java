@@ -108,13 +108,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
                 + dateTimeFormatter.print(DateTime.now()) + ".zip";
         final FileObject archiveFile = resolveFile(name, backupFolder,
                 fileSystem);
-        final OutputStream output;
-        try {
-            output = archiveFile.getContent().getOutputStream();
-        } catch (final FileSystemException e) {
-            log.error(LogMessage.ERROR_OPENING, name);
-            throw e;
-        }
+        final OutputStream output = getOutputStream(archiveFile);
         final OutputStream checkedOutput = new CheckedOutputStream(output,
                 checksum);
         final OutputStream bufferedOutput = new BufferedOutputStream(
@@ -122,5 +116,15 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         final ZipOutputStream zipOutput = new ZipOutputStream(bufferedOutput);
         zipOutput.setLevel(compressionLevel.asInteger());
         return zipOutput;
+    }
+
+    private OutputStream getOutputStream(final FileObject file)
+            throws FileSystemException {
+        try {
+            return file.getContent().getOutputStream();
+        } catch (final FileSystemException e) {
+            log.error(LogMessage.ERROR_OPENING, file);
+            throw e;
+        }
     }
 }

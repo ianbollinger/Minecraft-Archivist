@@ -99,12 +99,12 @@ class ArchivistModule extends AbstractModule {
     @Singleton
     public FileSystemManager provideFileSystemManager()
             throws FileSystemException {
-        final DefaultFileSystemManager fileSystemManager = new DefaultFileSystemManager();
-        fileSystemManager.addProvider("file", new DefaultLocalFileProvider());
-        fileSystemManager.setFilesCache(new DefaultFilesCache());
-        fileSystemManager.setCacheStrategy(CacheStrategy.ON_RESOLVE);
-        fileSystemManager.setBaseFile(new File("."));
-        fileSystemManager.init();
-        return fileSystemManager;
+        final DefaultFileSystemManager manager = new DefaultFileSystemManager();
+        manager.addProvider("file", new DefaultLocalFileProvider());
+        manager.setFilesCache(new DefaultFilesCache());
+        manager.setCacheStrategy(CacheStrategy.ON_RESOLVE);
+        manager.setBaseFile(new File("."));
+        manager.init();
+        return manager;
     }
 }

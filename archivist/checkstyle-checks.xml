@@ -236,17 +236,15 @@
 
     <!-- size violations =================================================== -->
     <module name="AnonInnerLength">
-
-      <property name="max" value="10"/>
+      <property name="max" value="9"/>
     </module>
     <module name="ExecutableStatementCount">
       <property name="severity" value="info"/>
-      <property name="max" value="10"/>
+      <property name="max" value="9"/>
     </module>
     <module name="LineLength"/>
     <!-- invalid <module name="MethodCount"/> -->
     <module name="MethodLength">
-
       <property name="max" value="50"/>
     </module>
     <module name="OuterTypeNumber"/>
@@ -306,7 +304,7 @@
   </module>
 
   <module name="FileLength">
-    <property name="max" value="500"/>
+    <property name="max" value="400"/>
   </module>
 
   <module name="FileTabCharacter">

@@ -51,8 +51,8 @@ public final class BukkitPluginModule extends AbstractModule {
     @Provides @Singleton
     public LocLogger provideLogger() {
         final IMessageConveyor messageConveyor = new MessageConveyor(Locale.US);
-        final LocLoggerFactory loggerFactory = new LocLoggerFactory(messageConveyor);
-        return loggerFactory.getLocLogger(BUKKIT_LOGGER_NAME);
+        final LocLoggerFactory factory = new LocLoggerFactory(messageConveyor);
+        return factory.getLocLogger(BUKKIT_LOGGER_NAME);
     }
 
     private void bindConfiguration() {

@@ -67,7 +67,8 @@ class ConfigurationModule extends AbstractModule {
 
     @Provides
     @BackUpStartedMessage
-    public String provideBackUpStartedMessage(final Configuration configuration) {
+    public String provideBackUpStartedMessage(
+            final Configuration configuration) {
         return configuration.getString("backup-started-message",
                 ChatColor.GREEN + "[Archivist] Backup started.");
     }
@@ -82,7 +83,8 @@ class ConfigurationModule extends AbstractModule {
 
     @Provides
     @DurationToKeepBackups
-    public long provideDurationToKeepBackups(final Configuration configuration) {
+    public long provideDurationToKeepBackups(
+            final Configuration configuration) {
         final int durationToKeepBackups = configuration.getInt(
                 "duration-to-keep-backups", DEFAULT_DURATION_TO_KEEP_BACKUPS);
         return Math.max(1, durationToKeepBackups);
