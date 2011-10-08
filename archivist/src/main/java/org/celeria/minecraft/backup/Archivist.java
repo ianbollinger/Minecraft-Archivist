@@ -62,10 +62,22 @@ class Archivist implements BukkitPlugin {
     @Override
     public void run() {
         log.info(LogMessage.PLUGIN_ENABLED, version);
+        resetTasks();
+        enableManualBackupCommand();
+        scheduleTasks();
+    }
+
+    private void resetTasks() {
         scheduler.cancelTasks();
+    }
+
+    private void enableManualBackupCommand() {
+        pluginCommand.setExecutor(manualBackUpExecutor);
+    }
+
+    private void scheduleTasks() {
         scheduleBackUpCleaner();
         scheduleBackUpTask();
-        pluginCommand.setExecutor(manualBackUpExecutor);
     }
 
     private void scheduleBackUpCleaner() {
@@ -79,7 +91,7 @@ class Archivist implements BukkitPlugin {
 
     @Override
     public void stop() {
-        scheduler.cancelTasks();
+        resetTasks();
         log.info(LogMessage.PLUGIN_DISABLED, version);
     }
 }

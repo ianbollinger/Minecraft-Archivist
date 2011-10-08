@@ -40,12 +40,27 @@ public final class BukkitPluginModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bindConfiguration();
-        bindServer();
         bind(Plugin.class).toInstance(plugin);
-        bind(String.class).annotatedWith(PluginVersion.class)
-                .toInstance(plugin.getDescription().getVersion());
+        bindServer(plugin.getServer());
         install(module);
+    }
+
+    private void bindServer(final Server server) {
+        bind(Server.class).toInstance(server);
+        bind(BukkitScheduler.class).toInstance(server.getScheduler());
+        bind(PluginManager.class).toInstance(server.getPluginManager());
+    }
+
+    @Provides @PluginVersion @Singleton
+    public String providesVersion() {
+        return plugin.getDescription().getVersion();
+    }
+
+    @Provides @Singleton
+    public Configuration providesConfiguration() {
+        final Configuration configuration = plugin.getConfiguration();
+        configuration.load();
+        return configuration;
     }
 
     @Provides @Singleton
@@ -53,18 +68,5 @@ public final class BukkitPluginModule extends AbstractModule {
         final IMessageConveyor messageConveyor = new MessageConveyor(Locale.US);
         final LocLoggerFactory factory = new LocLoggerFactory(messageConveyor);
         return factory.getLocLogger(BUKKIT_LOGGER_NAME);
-    }
-
-    private void bindConfiguration() {
-        final Configuration configuration = plugin.getConfiguration();
-        configuration.load();
-        bind(Configuration.class).toInstance(configuration);
-    }
-
-    private void bindServer() {
-        final Server server = plugin.getServer();
-        bind(Server.class).toInstance(server);
-        bind(BukkitScheduler.class).toInstance(server.getScheduler());
-        bind(PluginManager.class).toInstance(server.getPluginManager());
     }
 }

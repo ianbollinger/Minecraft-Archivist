@@ -34,19 +34,18 @@ class WorldListProvider implements Provider<Iterable<World>> {
 
     @Override
     public Iterable<World> get() {
-        final List<String> worldNamesList = configuration.getStringList(
+        final List<String> worldNames = configuration.getStringList(
                 "worlds", ImmutableList.<String>of());
-        final List<World> worldList = server.getWorlds();
-        if (worldNamesList.isEmpty()) {
-            return worldList;
+        final List<World> worlds = server.getWorlds();
+        if (worldNames.isEmpty()) {
+            return worlds;
         }
-        return filteredWorldList(worldNamesList, worldList);
+        return filteredWorldListFrom(ImmutableSet.copyOf(worldNames), worlds);
     }
 
-    private Set<World> filteredWorldList(final List<String> worldNamesList,
+    private Set<World> filteredWorldListFrom(final Set<String> worldNames,
             final List<World> worldList) {
-        final Set<String> worldNames = ImmutableSet.copyOf(worldNamesList);
-        final Set<World> worlds = Sets.newHashSet();
+        final Set<World> worlds = Sets.newHashSet(worldList);
         for (final World world : worldList) {
             if (!worldNames.contains(world.getName())) {
                 worlds.remove(world);

@@ -61,18 +61,25 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
     public WorldTask create(final World world) {
         final String worldName = world.getName();
         final FileSystemManager fileSystem = getFileSystemManager();
-        final FileObject temporaryWorldFolder = resolveFile(worldName,
-                getTemporaryFolder(), fileSystem);
-        return new ArchiveWorldTask(log, folderFor(worldName, fileSystem),
-                temporaryWorldFolder, archiveFor(world, fileSystem), world);
+        final FileObject worldFolder = folderFor(worldName, fileSystem);
+        return new ArchiveWorldTask(log, worldFolder,
+                temporaryWorldFolderFor(worldName, fileSystem),
+                archiveFor(world, fileSystem),
+                world);
     }
 
+    private FileObject temporaryWorldFolderFor(final String worldName,
+            final FileSystemManager fileSystem) {
+        return resolveFile(worldName, getTemporaryFolder(), fileSystem);
+    }
+
+    // TODO: it would be nice if we could just "get" this damn thing once
+    // and be done with it.
     private FileSystemManager getFileSystemManager() {
         try {
             return fileSystemProvider.get();
         } catch (final FileSystemException e) {
-            log.error(ErrorMessage.CANNOT_ACCESS_FILE_SYSTEM);
-            throw new WorldTaskException(e);
+            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FILE_SYSTEM);
         }
     }
 
@@ -80,8 +87,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         try {
             return temporaryFolderProvider.get();
         } catch (final FileSystemException e) {
-            log.error(ErrorMessage.CANNOT_ACCESS_TEMPORARY_FOLDER);
-            throw new WorldTaskException(e);
+            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_TEMPORARY_FOLDER);
         }
     }
 
@@ -90,8 +96,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         try {
             return fileSystem.resolveFile(name);
         } catch (final FileSystemException e) {
-            log.error(ErrorMessage.INVALID_FILE_NAME, name);
-            throw new WorldTaskException(e);
+            throw afterLogging(e, ErrorMessage.INVALID_FILE_NAME, name);
         }
     }
 
@@ -100,19 +105,25 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         try {
             return fileSystem.resolveFile(path, name);
         } catch (final FileSystemException e) {
-            log.error(ErrorMessage.INVALID_FILE_NAME, name);
-            throw new WorldTaskException(e);
+            throw afterLogging(e, ErrorMessage.INVALID_FILE_NAME, name);
         }
     }
 
     private ZipOutputStream archiveFor(final World world,
             final FileSystemManager fileSystem) {
-        final String fileName = fileNameFor(world);
-        final FileObject file = resolveFile(fileName, getBackupFolder(),
-                fileSystem);
+        return archiveFor(fileFor(world, fileSystem));
+    }
+
+    private ZipOutputStream archiveFor(final FileObject file) {
         final ZipOutputStream stream = zipStreamFor(file);
         stream.setLevel(compressionLevel.asInteger());
         return stream;
+    }
+
+    private FileObject fileFor(final World world,
+            final FileSystemManager fileSystem) {
+        final String fileName = fileNameFor(world);
+        return resolveFile(fileName, getBackupFolder(), fileSystem);
     }
 
     private ZipOutputStream zipStreamFor(final FileObject archiveFile) {
@@ -127,8 +138,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         try {
             return backupFolderProvider.get();
         } catch (final FileSystemException e) {
-            log.error(ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER);
-            throw new WorldTaskException(e);
+            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER); 
         }
     }
 
@@ -141,8 +151,8 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         try {
             return contentOf(file).getOutputStream();
         } catch (final FileSystemException e) {
-            log.error(ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING, file);
-            throw new WorldTaskException(e);
+            throw afterLogging(e, ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING,
+                    file);
         }
     }
 
@@ -150,8 +160,15 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         try {
             return file.getContent();
         } catch (final FileSystemException e) {
-            log.error(ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING, file);
-            throw new WorldTaskException(e);
+            throw afterLogging(e, ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING,
+                    file);
         }
+    }
+
+    // TODO: this code is duplicated. Subclass LocLogger at some point.
+    private RuntimeException afterLogging(final Throwable e,
+            final ErrorMessage message, final Object... args) {
+        log.error(message, args);
+        throw new WorldTaskException(e);
     }
 }

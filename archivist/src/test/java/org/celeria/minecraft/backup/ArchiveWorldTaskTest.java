@@ -49,11 +49,15 @@ public class ArchiveWorldTaskTest {
     @Inject @Named("file") private FileName fileName;
 
     @Before
-    public void setUpFile(final FileContent fileContent,
-            final InputStream inputStream) throws Exception {
+    public void setUpFile() throws Exception {
         when(file.getType()).thenReturn(FileType.FILE);
-        when(file.getContent()).thenReturn(fileContent);
         when(file.getName()).thenReturn(fileName);
+    }
+
+    @Before
+    public void setUpFileContent(final FileContent fileContent,
+            final InputStream inputStream) throws Exception {
+        when(file.getContent()).thenReturn(fileContent);
         when(fileContent.getInputStream()).thenReturn(inputStream);
         when(inputStream.read(Matchers.<byte[]>any())).thenReturn(-1);
     }

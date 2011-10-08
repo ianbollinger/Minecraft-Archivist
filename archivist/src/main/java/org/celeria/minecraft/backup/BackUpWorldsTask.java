@@ -61,9 +61,7 @@ public class BackUpWorldsTask implements Runnable {
     public void run() {
         sendMessage(backUpStartedMessage);
         server.savePlayers();
-        for (final World world : worlds) {
-            runBackUpTask(world);
-        }
+        runTaskOnWorlds();
         sendMessage(backUpEndedMessage);
     }
 
@@ -74,7 +72,13 @@ public class BackUpWorldsTask implements Runnable {
         server.broadcastMessage(message);
     }
 
-    private void runBackUpTask(final World world) {
+    private void runTaskOnWorlds() {
+        for (final World world : worlds) {
+            runTaskFor(world);
+        }
+    }
+
+    private void runTaskFor(final World world) {
         log.info(LogMessage.BACKING_UP_WORLD, world.getName());
         try {
             scheduler.runAsynchronousTask(worldTaskFactory.create(world));

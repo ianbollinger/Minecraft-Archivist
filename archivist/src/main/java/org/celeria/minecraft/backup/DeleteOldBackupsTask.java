@@ -50,13 +50,17 @@ class DeleteOldBackupsTask implements Runnable {
 
     @Override
     public void run() {
+        for (final FileObject backup : getBackupFolderContents()) {
+            deleteBackupIfOld(backup);
+        }
+    }
+
+    private FileObject[] getBackupFolderContents() { 
         try {
-            final FileObject backupFolder = backupFolderProvider.get();
-            for (final FileObject backup : backupFolder.getChildren()) {
-                deleteBackupIfOld(backup);
-            }
+            return backupFolderProvider.get().getChildren();
         } catch (final FileSystemException e) {
             log.error(ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER);
+            return new FileObject[] {};
         }
     }
 

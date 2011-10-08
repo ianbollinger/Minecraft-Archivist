@@ -85,7 +85,7 @@ class ArchiveWorldTask implements WorldTask {
         try {
             temporaryWorldFolder.createFolder();
         } catch (final FileSystemException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_CREATE_TEMPORARY_FOLDER,
+            throw afterLogging(e, ErrorMessage.CANNOT_CREATE_TEMPORARY_FOLDER,
                     temporaryWorldFolder);
         }
     }
@@ -94,7 +94,7 @@ class ArchiveWorldTask implements WorldTask {
         try {
             temporaryWorldFolder.copyFrom(worldFolder, Selectors.SELECT_ALL);
         } catch (final IOException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_COPY_WORLD,
+            throw afterLogging(e, ErrorMessage.CANNOT_COPY_WORLD,
                     temporaryWorldFolder, worldFolder);
         }
     }
@@ -109,7 +109,7 @@ class ArchiveWorldTask implements WorldTask {
             temporaryWorldFolder.delete(Selectors.SELECT_ALL);
             temporaryWorldFolder.delete();
         } catch (final FileSystemException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_DELETE_TEMPORARY_FOLDER,
+            throw afterLogging(e, ErrorMessage.CANNOT_DELETE_TEMPORARY_FOLDER,
                     temporaryWorldFolder);
         }
     }
@@ -125,7 +125,7 @@ class ArchiveWorldTask implements WorldTask {
         try {
             return folder.getChildren();
         } catch (final FileSystemException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_ACCESS_FOLDER, folder);
+            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FOLDER, folder);
         }
     }
 
@@ -153,7 +153,7 @@ class ArchiveWorldTask implements WorldTask {
         try {
             return file.getType();
         } catch (final FileSystemException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_DETERMINE_FILE_TYPE);
+            throw afterLogging(e, ErrorMessage.CANNOT_DETERMINE_FILE_TYPE);
         }
     }
 
@@ -193,7 +193,7 @@ class ArchiveWorldTask implements WorldTask {
         try {
             return baseFolderName.getRelativeName(name);
         } catch (final FileSystemException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_ACCESS_FILE, name);
+            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FILE, name);
         }
     }
 
@@ -201,7 +201,7 @@ class ArchiveWorldTask implements WorldTask {
         try {
             return content.getLastModifiedTime();
         } catch (final IOException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_ACCESS_FILE,
+            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FILE,
                     content.getFile());
         }
     }
@@ -210,9 +210,9 @@ class ArchiveWorldTask implements WorldTask {
         try {
             archive.putNextEntry(entry);
         } catch (final ZipException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
+            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
         } catch (final IOException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
+            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
         }
     }
 
@@ -220,7 +220,7 @@ class ArchiveWorldTask implements WorldTask {
         try {
             return source.getContent();
         } catch (final FileSystemException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_ACCESS_FILE, source);
+            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FILE, source);
         }
     }
 
@@ -228,7 +228,7 @@ class ArchiveWorldTask implements WorldTask {
         try {
             return content.getInputStream();
         } catch (final FileSystemException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_OPEN_FILE_FOR_READING,
+            throw afterLogging(e, ErrorMessage.CANNOT_OPEN_FILE_FOR_READING,
                     content.getFile());
         }
     }
@@ -237,7 +237,7 @@ class ArchiveWorldTask implements WorldTask {
         try {
             ByteStreams.copy(input, output);
         } catch (final IOException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
+            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
         }
     }
 
@@ -253,14 +253,14 @@ class ArchiveWorldTask implements WorldTask {
         try {
             archive.closeEntry();
         } catch (final ZipException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
+            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
         } catch (final IOException e) {
-            throw logAndThrow(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
+            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
         }
     }
 
-    private RuntimeException logAndThrow(final Throwable e,
-            final ErrorMessage message, Object... args) {
+    private RuntimeException afterLogging(final Throwable e,
+            final ErrorMessage message, final Object... args) {
         log.error(message, args);
         throw new WorldTaskException(e);
     }

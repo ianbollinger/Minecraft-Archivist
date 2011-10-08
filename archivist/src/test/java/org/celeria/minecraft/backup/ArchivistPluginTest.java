@@ -18,6 +18,7 @@ package org.celeria.minecraft.backup;
 
 import static org.mockito.Mockito.*;
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.URL;
 import com.google.common.base.Charsets;
@@ -42,11 +43,14 @@ public class ArchivistPluginTest {
         @Override
         protected void configureTest() {
             bindMock(Plugin.class);
+            bindMock(Configuration.class).in(TestSingleton.class);
+            bindConstructor(PluginCommand.class, String.class, Plugin.class);
+        }
+
+        private <T> void bindConstructor(final Class<T> clazz,
+                final Class<?>... args) {
             try {
-                bindMock(Configuration.class).in(TestSingleton.class);
-                bind(PluginCommand.class).toConstructor(
-                        PluginCommand.class.getDeclaredConstructor(
-                                String.class, Plugin.class));
+                bind(clazz).toConstructor(clazz.getDeclaredConstructor(args));
             } catch (final NoSuchMethodException e) {
                 addError(e);
             }
@@ -54,24 +58,26 @@ public class ArchivistPluginTest {
     }
 
     @Inject private ArchivistPlugin plugin;
-    @Inject private Configuration configuration;
     @Inject private Server server;
-    @Inject private BukkitScheduler scheduler;
-    @Inject private PluginManager pluginManager;
-    @Inject private PluginCommand pluginCommand;
 
     @Before
-    public void setUpMocks() {
-        when(server.getScheduler()).thenReturn(scheduler);
-        when(server.getPluginManager()).thenReturn(pluginManager);
-        when(server.getPluginCommand("backup")).thenReturn(pluginCommand);
+    public void setUpConfiguration(final Configuration configuration)
+            throws Exception{
         when(configuration.getString(anyString(), anyString())).thenReturn(
                 CompressionLevel.DEFAULT.toString());
+        setFieldTo(plugin, "config", configuration);
     }
 
     @Before
-    public void setUpPrivateFields() throws Exception {
-        setFieldTo(plugin, "config", configuration);
+    public void setUpPlugins(final PluginManager pluginManager,
+            final PluginCommand pluginCommand) {
+        when(server.getPluginManager()).thenReturn(pluginManager);
+        when(server.getPluginCommand("backup")).thenReturn(pluginCommand);
+    }
+
+    @Before
+    public void setUpServer(final BukkitScheduler scheduler) throws Exception {
+        when(server.getScheduler()).thenReturn(scheduler);
         setFieldTo(plugin, "server", server);
     }
 
