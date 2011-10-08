@@ -19,7 +19,6 @@ package org.celeria.minecraft.backup;
 import static org.mockito.Mockito.*;
 import com.google.inject.Inject;
 import org.apache.commons.vfs2.*;
-import org.bukkit.Server;
 import org.bukkit.util.config.Configuration;
 import org.jukito.JukitoRunner;
 import org.junit.Test;
@@ -64,12 +63,6 @@ public class ConfigurationModuleTest {
     @Test
     public void testProvideDurationToKeepBackups() {
         module.provideDurationToKeepBackups(configuration);
-        // TODO: verify something!
-    }
-
-    @Test
-    public void testProvideWorlds(final Server server) {
-        module.provideWorlds(configuration, server);
         // TODO: verify something!
     }
 

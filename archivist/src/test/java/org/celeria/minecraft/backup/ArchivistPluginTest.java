@@ -72,17 +72,25 @@ public class ArchivistPluginTest {
 
     @Before
     public void setUpPrivateFields() throws Exception {
+        setFieldTo(plugin, "config", configuration);
+        setFieldTo(plugin, "server", server);
+    }
+
+    @Before
+    public void setUpDescription() throws Exception {
         final URL resource = Resources.getResource("plugin.yml");
+        setFieldTo(plugin, "description", getDescription(resource));
+    }
+
+    private PluginDescriptionFile getDescription(final URL resource)
+            throws Exception {
         final Reader reader = Resources.newReaderSupplier(resource,
                 Charsets.UTF_8).getInput();
         try {
-            setFieldTo(plugin, "description",
-                    new PluginDescriptionFile(reader));
+            return new PluginDescriptionFile(reader);
         } finally {
             reader.close();
         }
-        setFieldTo(plugin, "config", configuration);
-        setFieldTo(plugin, "server", server);
     }
 
     @Test(timeout = TIMEOUT)

@@ -58,16 +58,20 @@ class ArchiveWorldTask implements WorldTask {
     @Override
     public final void run() {
         try {
-            createTemporaryFolder();
-            saveAndCopyWorld();
-            archiveCopiedWorld();
-            deleteCopiedWorld();
+            archiveWorld();
         } catch (final WorldTaskException e) {
             log.error(ErrorMessage.TASK_FAILED, e.getCause());
         } finally {
             // TODO: this doesn't seem appropriate, unless I *get* the archive.
             close(archive);
         }
+    }
+
+    private void archiveWorld() {
+        createTemporaryFolder();
+        saveAndCopyWorld();
+        archiveCopiedWorld();
+        deleteCopiedWorld();
     }
 
     private void saveAndCopyWorld() {

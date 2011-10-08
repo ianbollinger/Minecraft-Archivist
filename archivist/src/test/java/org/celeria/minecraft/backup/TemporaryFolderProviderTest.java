@@ -16,31 +16,31 @@
 
 package org.celeria.minecraft.backup;
 
+import static org.mockito.Mockito.*;
 import com.google.inject.Inject;
-import org.bukkit.Server;
+import org.apache.commons.vfs2.*;
 import org.jukito.JukitoRunner;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 
 @RunWith(JukitoRunner.class)
-public class ArchivistModuleTest {
-    @Inject private ArchivistModule module;
+public class TemporaryFolderProviderTest {
+    @Inject private TemporaryFolderProvider provider;
+    @Inject private FileProvider<FileSystemManager> fileSystemManagerProvider;
+    @Inject private FileSystemManager fileSystemManager;
+    @Inject private FileObject file;
 
-    @Test
-    public void testProvidePluginCommand(final Server server) {
-        module.providePluginCommand(server);
-        // TODO: verify something.
+    @Before
+    public void setUp() throws Exception {
+        when(fileSystemManagerProvider.get()).thenReturn(fileSystemManager);
+        when(fileSystemManager.resolveFile(Matchers.<FileObject>any(),
+                anyString())).thenReturn(file);
     }
 
     @Test
-    public void testProvideDateTimeFormater() {
-        module.provideDateTimeFormater();
-        // TODO: verify something.
-    }
-
-    @Test
-    public void testProvideCurrentTime() {
-        module.provideCurrentTime();
+    public void testGet() throws Exception {
+        provider.get();
         // TODO: verify something.
     }
 }

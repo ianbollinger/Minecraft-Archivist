@@ -16,31 +16,18 @@
 
 package org.celeria.minecraft.backup;
 
-import com.google.inject.Inject;
-import org.bukkit.Server;
 import org.jukito.JukitoRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import com.google.inject.Inject;
 
 @RunWith(JukitoRunner.class)
-public class ArchivistModuleTest {
-    @Inject private ArchivistModule module;
+public class WorldListProviderTest {
+    @Inject private WorldListProvider provider;
 
     @Test
-    public void testProvidePluginCommand(final Server server) {
-        module.providePluginCommand(server);
-        // TODO: verify something.
-    }
-
-    @Test
-    public void testProvideDateTimeFormater() {
-        module.provideDateTimeFormater();
-        // TODO: verify something.
-    }
-
-    @Test
-    public void testProvideCurrentTime() {
-        module.provideCurrentTime();
+    public void testGet() {
+        provider.get();
         // TODO: verify something.
     }
 }

@@ -17,7 +17,6 @@
 package org.celeria.minecraft.backup;
 
 import static org.joda.time.DateTimeFieldType.*;
-import java.io.File;
 import java.util.List;
 import java.util.zip.*;
 import javax.annotation.concurrent.Immutable;
@@ -25,13 +24,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.*;
 import com.google.inject.throwingproviders.*;
 import org.apache.commons.vfs2.*;
-import org.apache.commons.vfs2.cache.DefaultFilesCache;
-import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
-import org.apache.commons.vfs2.provider.local.DefaultLocalFileProvider;
 import org.bukkit.*;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
-import org.celeria.minecraft.backup.ArchiveWorldTask.*;
+import org.bukkit.command.*;
+import org.celeria.minecraft.backup.ArchiveWorldTask.TemporaryFolder;
 import org.celeria.minecraft.backup.DeleteOldBackupsTask.CurrentTime;
 import org.celeria.minecraft.guice.BukkitPlugin;
 import org.joda.time.DateTimeFieldType;
@@ -39,16 +34,23 @@ import org.joda.time.format.*;
 
 @Immutable
 class ArchivistModule extends AbstractModule {
-    private static final int TEMPORARY_FOLDER_ATTEMPTS = 10000;
-
     @Override
     protected void configure() {
         bind(BukkitPlugin.class).to(Archivist.class);
         bind(Checksum.class).to(Adler32.class);
         bind(CommandExecutor.class).to(ManualBackUpExecutor.class);
+        bind(WorldTaskFactory.class).to(ArchiveWorldTaskFactory.class);
         install(ThrowingProviderBinder.forModule(this));
         install(new ConfigurationModule());
-        bind(WorldTaskFactory.class).to(ArchiveWorldTaskFactory.class);
+        ThrowingProviderBinder.create(binder())
+                .bind(FileProvider.class, FileObject.class)
+                .annotatedWith(TemporaryFolder.class)
+                .to(TemporaryFolderProvider.class)
+                .in(Singleton.class);
+        ThrowingProviderBinder.create(binder())
+                .bind(FileProvider.class, FileSystemManager.class)
+                .to(TemporaryFolderProvider.class)
+                .in(Singleton.class);
     }
 
     @Provides @Singleton
@@ -64,51 +66,8 @@ class ArchivistModule extends AbstractModule {
         return ISODateTimeFormat.forFields(fields, true, true);
     }
 
-    @CheckedProvides(FileProvider.class) @TemporaryFolder @Singleton
-    public FileObject provideTemporaryFolder(
-            final FileProvider<FileSystemManager> fileSystemProvider)
-            throws FileSystemException {
-        final FileSystemManager fileSystem = fileSystemProvider.get();
-        final FileObject folder = getTemporaryFolder(fileSystem);
-        final String childName = System.currentTimeMillis() + "-";
-        return getChildFolder(fileSystem, folder, childName);
-    }
-
-    private FileObject getChildFolder(final FileSystemManager fileSystem,
-            final FileObject baseFolder, final String baseName)
-            throws FileSystemException {
-        for (int counter = 0; counter < TEMPORARY_FOLDER_ATTEMPTS; ++counter) {
-            final FileObject temporaryFolder = fileSystem.resolveFile(
-                    baseFolder, baseName + counter);
-            if (!temporaryFolder.exists()) {
-                temporaryFolder.createFolder();
-                return temporaryFolder;
-            }
-        }
-        throw new FileSystemException("Failed to create directory within "
-                + TEMPORARY_FOLDER_ATTEMPTS + " attempts (tried " + baseName
-                + "0 to " + baseName + (TEMPORARY_FOLDER_ATTEMPTS - 1) + ')');
-    }
-
-    private FileObject getTemporaryFolder(final FileSystemManager fileSystem)
-            throws FileSystemException {
-        return fileSystem.resolveFile(System.getProperty("java.io.tmpdir"));
-    }
-
     @Provides @CurrentTime
     public long provideCurrentTime() {
         return System.currentTimeMillis();
-    }
-
-    @CheckedProvides(FileProvider.class) @Singleton
-    public FileSystemManager provideFileSystemManager()
-            throws FileSystemException {
-        final DefaultFileSystemManager manager = new DefaultFileSystemManager();
-        manager.addProvider("file", new DefaultLocalFileProvider());
-        manager.setFilesCache(new DefaultFilesCache());
-        manager.setCacheStrategy(CacheStrategy.ON_RESOLVE);
-        manager.setBaseFile(new File("."));
-        manager.init();
-        return manager;
     }
 }

@@ -19,9 +19,7 @@ package org.celeria.minecraft.backup;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.*;
-import java.util.*;
 import javax.annotation.concurrent.Immutable;
-import com.google.common.collect.*;
 import com.google.inject.*;
 import com.google.inject.throwingproviders.CheckedProvides;
 import com.google.inject.throwingproviders.ThrowingProviderBinder;
@@ -42,6 +40,8 @@ class ConfigurationModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(new TypeLiteral<Iterable<World>>() {})
+                .toProvider(WorldListProvider.class).in(Singleton.class);
         install(ThrowingProviderBinder.forModule(this));
     }
 
@@ -84,30 +84,6 @@ class ConfigurationModule extends AbstractModule {
         final int durationToKeepBackups = configuration.getInt(
                 "duration-to-keep-backups", DEFAULT_DURATION_TO_KEEP_BACKUPS);
         return Math.max(1, durationToKeepBackups);
-    }
-
-    @Provides @Singleton
-    public Iterable<World> provideWorlds(final Configuration configuration,
-            final Server server) {
-        final List<String> worldNamesList = configuration.getStringList(
-                "worlds", ImmutableList.<String>of());
-        final List<World> worldList = server.getWorlds();
-        if (worldNamesList.isEmpty()) {
-            return worldList;
-        }
-        return filteredWorldList(worldNamesList, worldList);
-    }
-
-    private Set<World> filteredWorldList(final List<String> worldNamesList,
-            final List<World> worldList) {
-        final Set<String> worldNames = ImmutableSet.copyOf(worldNamesList);
-        final Set<World> worlds = Sets.newHashSet();
-        for (final World world : worldList) {
-            if (!worldNames.contains(world.getName())) {
-                worlds.remove(world);
-            }
-        }
-        return worlds;
     }
 
     @Provides @BackUpInterval @Singleton

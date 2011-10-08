@@ -107,18 +107,20 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
 
     private ZipOutputStream archiveFor(final World world,
             final FileSystemManager fileSystem) {
-        final FileObject archiveFile = getArchiveFile(world, fileSystem);
-        final OutputStream output = getOutputStream(archiveFile);
-        final OutputStream checkedOutput = new CheckedOutputStream(output,
-                checksum);
-        final OutputStream bufferedOutput = new BufferedOutputStream(
-                checkedOutput);
-        final ZipOutputStream zipOutput = new ZipOutputStream(bufferedOutput);
-        zipOutput.setLevel(compressionLevel.asInteger());
-        return zipOutput;
+        final ZipOutputStream stream = zipStreamFor(fileFor(world, fileSystem));
+        stream.setLevel(compressionLevel.asInteger());
+        return stream;
     }
 
-    private FileObject getArchiveFile(final World world,
+    private ZipOutputStream zipStreamFor(final FileObject archiveFile) {
+        final OutputStream checkedStream = new CheckedOutputStream(
+                streamFor(archiveFile), checksum);
+        final OutputStream bufferedStream = new BufferedOutputStream(
+                checkedStream);
+        return new ZipOutputStream(bufferedStream);
+    }
+
+    private FileObject fileFor(final World world,
             final FileSystemManager fileSystem) {
         final FileObject backupFolder;
         try {
@@ -132,7 +134,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         return resolveFile(name, backupFolder, fileSystem);
     }
 
-    private OutputStream getOutputStream(final FileObject file) {
+    private OutputStream streamFor(final FileObject file) {
         try {
             return contentOf(file).getOutputStream();
         } catch (final FileSystemException e) {
