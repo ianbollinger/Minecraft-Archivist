@@ -43,11 +43,31 @@ import org.junit.runner.RunWith;
                 .scheduleAsyncRepeatingTask(plugin, task, 0, 1);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testRepeatAsynchronousTaskWithIllegalArgument() {
+        scheduler.repeatAsynchronousTask(task, 0);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testRepeatAsynchronousTaskWithNullArgument() {
+        scheduler.repeatAsynchronousTask(null, 1);
+    }
+
     @Test
     public void testRepeatSynchronousTask() {
         scheduler.repeatSynchronousTask(task, 0, 1);
         verify(underlyingScheduler).scheduleSyncRepeatingTask(plugin, task, 0,
                 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRepeatSynchronousTaskWithIllegalDelay() {
+        scheduler.repeatSynchronousTask(task, -1, 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRepeatSynchronousTaskWithIllegalPeroid() {
+        scheduler.repeatSynchronousTask(task, 0, 0);
     }
 
     @Test

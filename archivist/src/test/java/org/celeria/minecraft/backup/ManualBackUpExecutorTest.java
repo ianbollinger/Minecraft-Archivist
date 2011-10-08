@@ -19,6 +19,7 @@ package org.celeria.minecraft.backup;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import com.google.inject.Inject;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.celeria.minecraft.guice.TaskScheduler;
 import org.jukito.*;
@@ -29,31 +30,34 @@ import org.junit.runner.RunWith;
 public class ManualBackUpExecutorTest {
     @Inject private ManualBackUpExecutor executor;
     @Inject private TaskScheduler scheduler;
-    @Inject private Player player;
-    @Inject private BackUpWorldsTask task;
-
-    @Before
-    public void setUp() {
-        // Do nothing for now.
-    }
 
     @Test
-    public void shouldDoNothingWhenSenderIsNotPlayer() {
+    public void shouldDoNothingWhenSenderIsNoOne() {
         assertFalse(executor.onCommand(null, null, null, null));
         verifyZeroInteractions(scheduler);
     }
 
     @Test
-    public void shouldDoNothingWhenSenderIsNotOp() {
-        when(player.isOp()).thenReturn(false);
-        assertFalse(executor.onCommand(player, null, null, null));
+    public void shouldDoNothingWhenSenderIsNotOp(final Player sender) {
+        when(sender.isOp()).thenReturn(false);
+        assertFalse(executor.onCommand(sender, null, null, null));
         verifyZeroInteractions(scheduler);
     }
 
     @Test
-    public void shouldScheduleBackUpTask() {
-        when(player.isOp()).thenReturn(true);
-        assertTrue(executor.onCommand(player, null, null, null));
+    public void shouldScheduleBackUpTaskWhenSenderIsServer(
+            final ConsoleCommandSender sender,
+            final BackUpWorldsTask task) {
+        assertTrue(executor.onCommand(sender, null, null, null));
+        verify(scheduler).runSynchronousTask(task);
+        verifyNoMoreInteractions(scheduler);
+    }
+
+    @Test
+    public void shouldScheduleBackUpTask(final Player sender,
+            final BackUpWorldsTask task) {
+        when(sender.isOp()).thenReturn(true);
+        assertTrue(executor.onCommand(sender, null, null, null));
         verify(scheduler).runSynchronousTask(task);
         verifyNoMoreInteractions(scheduler);
     }

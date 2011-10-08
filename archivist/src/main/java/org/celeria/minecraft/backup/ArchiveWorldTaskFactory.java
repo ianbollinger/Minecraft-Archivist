@@ -71,7 +71,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
                 archive, world);
     }
 
-    public FileObject folderFor(final World world,
+    private FileObject folderFor(final World world,
             final FileSystemManager fileSystem) throws FileSystemException {
         final String worldName = world.getName();
         try {
@@ -82,7 +82,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         }
     }
 
-    public FileObject temporaryFolderFor(final World world,
+    private FileObject temporaryFolderFor(final World world,
             final FileObject temporaryFolder,
             final FileSystemManager fileSystem)
             throws FileSystemException {
@@ -100,7 +100,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         }
     }
 
-    public ZipOutputStream archiveFor(final World world,
+    private ZipOutputStream archiveFor(final World world,
             final FileSystemManager fileSystem) throws FileSystemException {
         // TODO: this can throw an exception, log it!
         final FileObject backupFolder = backupFolderProvider.get();
