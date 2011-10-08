@@ -236,11 +236,11 @@
 
     <!-- size violations =================================================== -->
     <module name="AnonInnerLength">
-      <property name="max" value="9"/>
+      <property name="max" value="8"/>
     </module>
     <module name="ExecutableStatementCount">
       <property name="severity" value="info"/>
-      <property name="max" value="9"/>
+      <property name="max" value="8"/>
     </module>
     <module name="LineLength"/>
     <!-- invalid <module name="MethodCount"/> -->
