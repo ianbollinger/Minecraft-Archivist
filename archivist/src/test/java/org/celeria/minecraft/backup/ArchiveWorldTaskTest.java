@@ -99,16 +99,26 @@ public class ArchiveWorldTaskTest {
         when(archiveProvider.get()).thenReturn(archive);
     }
 
+    // TODO: figure out what's up with Jukito so I can split this into
+    // multiple tests!
     @Test
     public void testRun(final World world) throws Exception {
         task.run();
-        verify(world).setAutoSave(false);
-        verify(world).save();
-        verify(world).setAutoSave(true);
+        shouldSaveWorld(world);
         verify(temporaryWorldFolder)
                 .copyFrom(worldFolder, Selectors.SELECT_ALL);
         verify(archive).putNextEntry(Matchers.<ZipEntry>any());
         verify(archive).close();
+        shouldDeleteTemporaryFolder();
+    }
+
+    private void shouldSaveWorld(final World world) {
+        verify(world).setAutoSave(false);
+        verify(world).save();
+        verify(world).setAutoSave(true);
+    }
+
+    private void shouldDeleteTemporaryFolder() throws Exception {
         verify(temporaryWorldFolder).delete(Selectors.SELECT_ALL);
         verify(temporaryWorldFolder).delete();
     }

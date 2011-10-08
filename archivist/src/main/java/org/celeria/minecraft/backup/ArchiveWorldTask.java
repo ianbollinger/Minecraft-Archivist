@@ -152,9 +152,18 @@ class ArchiveWorldTask implements WorldTask {
         final ZipEntry entry = getArchiveEntry(baseFolder, source);
         final FileContent content = contentOf(source);
         entry.setTime(timeLastModifiedOf(content));
-        addArchiveEntry(entry);
-        copyStream(inputStreamFrom(content), archive);
-        closeArchiveEntry();
+        startArchiveEntry(entry);
+        writeArchiveEntry(content);
+        endArchiveEntry();
+    }
+
+    private void writeArchiveEntry(final FileContent content) {
+        final InputStream input = inputStreamFrom(content);
+        try {
+            copyStream(input, archive);
+        } finally {
+            close(input);
+        }
     }
 
     private ZipEntry getArchiveEntry(final FileObject baseFolder,
@@ -184,7 +193,7 @@ class ArchiveWorldTask implements WorldTask {
         }
     }
 
-    private void addArchiveEntry(final ZipEntry entry) {
+    private void startArchiveEntry(final ZipEntry entry) {
         try {
             archive.putNextEntry(entry);
         } catch (final ZipException e) {
@@ -216,17 +225,13 @@ class ArchiveWorldTask implements WorldTask {
     }
 
     public void copyStream(final InputStream input, final OutputStream output) {
-        try {
-            final byte[] buffer = new byte[BUFFER_SIZE];
-            while (true) {
-                final int bytesRead = readIntoBuffer(input, buffer);
-                if (bytesRead < 0) {
-                    break;
-                }
-                writeFromBuffer(output, buffer, bytesRead);
+        final byte[] buffer = new byte[BUFFER_SIZE];
+        while (true) {
+            final int bytesRead = readIntoBuffer(input, buffer);
+            if (bytesRead < 0) {
+                break;
             }
-        } finally {
-            close(input);
+            writeFromBuffer(output, buffer, bytesRead);
         }
     }
 
@@ -257,7 +262,7 @@ class ArchiveWorldTask implements WorldTask {
         }
     }
 
-    private void closeArchiveEntry() {
+    private void endArchiveEntry() {
         try {
             archive.closeEntry();
         } catch (final ZipException e) {

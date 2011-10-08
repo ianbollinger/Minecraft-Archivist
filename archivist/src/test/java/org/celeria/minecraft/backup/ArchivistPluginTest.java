@@ -18,18 +18,21 @@ package org.celeria.minecraft.backup;
 
 import static org.mockito.Mockito.*;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.URL;
 import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.*;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.config.Configuration;
 import org.jukito.*;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(JukitoRunner.class)
@@ -59,28 +62,39 @@ public class ArchivistPluginTest {
     @Inject private PluginCommand pluginCommand;
 
     @Before
-    public void setUp() throws Exception {
-        FieldUtils.writeDeclaredField(plugin, "config", configuration, true);
-        FieldUtils.writeDeclaredField(plugin, "server", server, true);
+    public void setUpMocks() {
+        when(server.getScheduler()).thenReturn(scheduler);
+        when(server.getPluginManager()).thenReturn(pluginManager);
+        when(server.getPluginCommand("backup")).thenReturn(pluginCommand);
+        when(configuration.getString(anyString(), anyString())).thenReturn(
+                CompressionLevel.DEFAULT.toString());
+    }
+
+    @Before
+    public void setUpPrivateFields() throws Exception {
         final URL resource = Resources.getResource("plugin.yml");
         final Reader reader = Resources.newReaderSupplier(resource,
                 Charsets.UTF_8).getInput();
         try {
-            when(server.getScheduler()).thenReturn(scheduler);
-            when(server.getPluginManager()).thenReturn(pluginManager);
-            when(server.getPluginCommand("backup")).thenReturn(pluginCommand);
-            when(configuration.getString(anyString(), anyString()))
-                    .thenReturn(CompressionLevel.DEFAULT.toString());
-            FieldUtils.writeDeclaredField(plugin, "description",
-                    new PluginDescriptionFile(reader), true);
+            setFieldTo(plugin, "description",
+                    new PluginDescriptionFile(reader));
         } finally {
             reader.close();
         }
+        setFieldTo(plugin, "config", configuration);
+        setFieldTo(plugin, "server", server);
     }
 
     @Test(timeout = TIMEOUT)
     public void test() {
         plugin.onEnable();
         // TODO: verify something!
+    }
+
+    private void setFieldTo(final Object instance, final String name,
+            final Object value) throws Exception {
+        final Field field = JavaPlugin.class.getDeclaredField(name);
+        field.setAccessible(true);
+        field.set(instance, value);
     }
 }

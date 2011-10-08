@@ -236,16 +236,17 @@
 
     <!-- size violations =================================================== -->
     <module name="AnonInnerLength">
-      <property name="max" value="7"/>
+      <property name="max" value="6"/>
     </module>
     <module name="ExecutableStatementCount">
       <property name="severity" value="info"/>
-      <property name="max" value="7"/>
+      <property name="max" value="6"/>
+      <property name="tokens" value="METHOD_DEF,STATIC_INIT">
     </module>
     <module name="LineLength"/>
-    <!-- invalid <module name="MethodCount"/> -->
+    <module name="MethodCount"/>
     <module name="MethodLength">
-      <property name="max" value="50"/>
+      <property name="max" value="12"/>
     </module>
     <module name="OuterTypeNumber"/>
     <module name="ParameterNumber">
@@ -279,7 +280,7 @@
     </module>
     <module name="WhitespaceAfter"/>
     <module name="WhitespaceAround">
-      <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, EQUAL, GE, GT, LAND, LE, LITERAL_ASSERT, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN, TYPE_EXTENSION_AND"/>
+      <property name="tokens" value="ASSIGN,BAND,BAND_ASSIGN,BOR,BOR_ASSIGN,BSR,BSR_ASSIGN,BXOR,BXOR_ASSIGN,COLON,DIV,DIV_ASSIGN,EQUAL,GE,GT,LAND,LE,LITERAL_ASSERT,LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_RETURN,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,LOR,LT,MINUS,MINUS_ASSIGN,MOD,MOD_ASSIGN,NOT_EQUAL,PLUS,PLUS_ASSIGN,QUESTION,SL,SLIST,SL_ASSIGN,SR,SR_ASSIGN,STAR,STAR_ASSIGN,TYPE_EXTENSION_AND"/>
       <property name="allowEmptyConstructors" value="true"/>
       <property name="allowEmptyMethods" value="true"/>
     </module>
@@ -304,7 +305,7 @@
   </module>
 
   <module name="FileLength">
-    <property name="max" value="400"/>
+    <property name="max" value="300"/>
   </module>
 
   <module name="FileTabCharacter">

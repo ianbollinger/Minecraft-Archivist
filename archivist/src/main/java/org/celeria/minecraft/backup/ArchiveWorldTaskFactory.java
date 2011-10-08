@@ -133,15 +133,17 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
     }
 
     private OutputStream getOutputStream(final FileObject file) {
-        FileContent content;
         try {
-            content = file.getContent();
+            return contentOf(file).getOutputStream();
         } catch (final FileSystemException e) {
             log.error(ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING, file);
             throw new WorldTaskException(e);
         }
+    }
+
+    private FileContent contentOf(final FileObject file) {
         try {
-            return content.getOutputStream();
+            return file.getContent();
         } catch (final FileSystemException e) {
             log.error(ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING, file);
             throw new WorldTaskException(e);
