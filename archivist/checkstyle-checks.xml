@@ -241,7 +241,7 @@
     <module name="ExecutableStatementCount">
       <property name="severity" value="info"/>
       <property name="max" value="6"/>
-      <property name="tokens" value="METHOD_DEF,STATIC_INIT">
+      <property name="tokens" value="METHOD_DEF,STATIC_INIT"/>
     </module>
     <module name="LineLength"/>
     <module name="MethodCount"/>
