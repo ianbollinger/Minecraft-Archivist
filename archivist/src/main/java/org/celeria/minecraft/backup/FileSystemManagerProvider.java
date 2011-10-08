@@ -25,18 +25,28 @@ import org.apache.commons.vfs2.provider.local.DefaultLocalFileProvider;
 class FileSystemManagerProvider implements
         FileProvider<FileSystemManager> {
     private final DefaultFileSystemManager manager;
+    private final DefaultLocalFileProvider provider;
+    private final DefaultFilesCache cache;
 
-    FileSystemManagerProvider(final DefaultFileSystemManager manager) {
+    FileSystemManagerProvider(final DefaultFileSystemManager manager,
+            final DefaultLocalFileProvider provider,
+            final DefaultFilesCache cache) {
         this.manager = manager;
+        this.provider = provider;
+        this.cache = cache;
     }
 
     @Override
     public FileSystemManager get() throws FileSystemException {
-        manager.addProvider("file", new DefaultLocalFileProvider());
-        manager.setFilesCache(new DefaultFilesCache());
-        manager.setCacheStrategy(CacheStrategy.ON_RESOLVE);
-        manager.setBaseFile(new File("."));
+        build();
         manager.init();
         return manager;
+    }
+
+    private void build() throws FileSystemException {
+        manager.addProvider("file", provider);
+        manager.setFilesCache(cache);
+        manager.setCacheStrategy(CacheStrategy.ON_RESOLVE);
+        manager.setBaseFile(new File("."));
     }
 }

@@ -44,32 +44,40 @@ public class DeleteOldBackupsTaskTest {
     }
 
     @Inject private DeleteOldBackupsTask task;
-    @Inject @BackupFolder private FileProvider<FileObject> backupFolderProvider;
-    @Inject private FileObject backupFolder;
     @Inject @Named("old") private FileObject oldBackUp;
     @Inject @Named("new") private FileObject newBackUp;
-    @Inject @Named("old") private FileContent oldBackUpContent;
-    @Inject @Named("new") private FileContent newBackUpContent;
 
     @Before
-    public void setUp() throws FileSystemException {
-        when(oldBackUp.getContent()).thenReturn(oldBackUpContent);
-        when(oldBackUpContent.getLastModifiedTime()).thenReturn(OLD_TIME);
-        when(newBackUp.getContent()).thenReturn(newBackUpContent);
-        when(newBackUpContent.getLastModifiedTime()).thenReturn(NEW_TIME);
-        when(backupFolder.getChildren()).thenReturn(
-                new FileObject[] {oldBackUp, newBackUp});
+    public void setUpFolder(
+            @BackupFolder final FileProvider<FileObject> backupFolderProvider,
+            @BackupFolder final FileObject backupFolder) throws Exception {
+        when(backupFolder.getChildren())
+                .thenReturn(new FileObject[] {oldBackUp, newBackUp});
         when(backupFolderProvider.get()).thenReturn(backupFolder);
     }
 
+    @Before
+    public void setUpOldBackUp(
+            @Named("old") final FileContent oldBackUpContent) throws Exception {
+        when(oldBackUp.getContent()).thenReturn(oldBackUpContent);
+        when(oldBackUpContent.getLastModifiedTime()).thenReturn(OLD_TIME);
+    }
+
+    @Before
+    public void setUpNewBackUp(
+            @Named("new") final FileContent newBackUpContent) throws Exception {
+        when(newBackUp.getContent()).thenReturn(newBackUpContent);
+        when(newBackUpContent.getLastModifiedTime()).thenReturn(NEW_TIME);
+    }
+
     @Test
-    public void shouldDeleteOldBackUp() throws FileSystemException {
+    public void shouldDeleteOldBackUp() throws Exception {
         task.run();
         verify(oldBackUp).delete();
     }
 
     @Test
-    public void shouldNotDeleteNewBackUp() throws FileSystemException {
+    public void shouldNotDeleteNewBackUp() throws Exception {
         task.run();
         verify(newBackUp, never()).delete();
     }

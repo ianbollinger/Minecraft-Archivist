@@ -107,7 +107,10 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
 
     private ZipOutputStream archiveFor(final World world,
             final FileSystemManager fileSystem) {
-        final ZipOutputStream stream = zipStreamFor(fileFor(world, fileSystem));
+        final String fileName = fileNameFor(world);
+        final FileObject file = resolveFile(fileName, getBackupFolder(),
+                fileSystem);
+        final ZipOutputStream stream = zipStreamFor(file);
         stream.setLevel(compressionLevel.asInteger());
         return stream;
     }
@@ -120,18 +123,18 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         return new ZipOutputStream(bufferedStream);
     }
 
-    private FileObject fileFor(final World world,
-            final FileSystemManager fileSystem) {
-        final FileObject backupFolder;
+    private FileObject getBackupFolder() {
         try {
-            backupFolder = backupFolderProvider.get();
+            return backupFolderProvider.get();
         } catch (final FileSystemException e) {
             log.error(ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER);
             throw new WorldTaskException(e);
         }
-        final String name = world.getName() + "_"
+    }
+
+    private String fileNameFor(final World world) {
+        return world.getName() + "_"
                 + dateTimeFormatter.print(DateTime.now()) + ".zip";
-        return resolveFile(name, backupFolder, fileSystem);
     }
 
     private OutputStream streamFor(final FileObject file) {

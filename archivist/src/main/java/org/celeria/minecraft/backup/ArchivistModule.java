@@ -36,12 +36,16 @@ import org.joda.time.format.*;
 class ArchivistModule extends AbstractModule {
     @Override
     protected void configure() {
+        bindImplementations();
+        bindProviders();
+        install(new ConfigurationModule());
+    }
+
+    private void bindImplementations() {
         bind(BukkitPlugin.class).to(Archivist.class);
         bind(Checksum.class).to(Adler32.class);
         bind(CommandExecutor.class).to(ManualBackUpExecutor.class);
         bind(WorldTaskFactory.class).to(ArchiveWorldTaskFactory.class);
-        bindProviders();
-        install(new ConfigurationModule());
     }
 
     private void bindProviders() {

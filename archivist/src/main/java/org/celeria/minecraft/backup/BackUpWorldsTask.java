@@ -76,12 +76,10 @@ public class BackUpWorldsTask implements Runnable {
 
     private void runBackUpTask(final World world) {
         log.info(LogMessage.BACKING_UP_WORLD, world.getName());
-        final WorldTask factory;
         try {
-            factory = worldTaskFactory.create(world);
+            scheduler.runAsynchronousTask(worldTaskFactory.create(world));
         } catch (final WorldTaskException e) {
             return;
         }
-        scheduler.runAsynchronousTask(factory);
     }
 }
