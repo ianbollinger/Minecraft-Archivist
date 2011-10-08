@@ -25,7 +25,7 @@ import org.apache.commons.vfs2.provider.local.DefaultLocalFileProvider;
 class FileSystemManagerProvider implements
         FileProvider<FileSystemManager> {
     private final DefaultFileSystemManager manager;
-    
+
     FileSystemManagerProvider(final DefaultFileSystemManager manager) {
         this.manager = manager;
     }

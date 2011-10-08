@@ -21,7 +21,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
 import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import org.bukkit.Server;

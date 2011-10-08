@@ -40,8 +40,11 @@ class ArchivistModule extends AbstractModule {
         bind(Checksum.class).to(Adler32.class);
         bind(CommandExecutor.class).to(ManualBackUpExecutor.class);
         bind(WorldTaskFactory.class).to(ArchiveWorldTaskFactory.class);
-        install(ThrowingProviderBinder.forModule(this));
+        bindProviders();
         install(new ConfigurationModule());
+    }
+
+    private void bindProviders() {
         ThrowingProviderBinder.create(binder())
                 .bind(FileProvider.class, FileObject.class)
                 .annotatedWith(TemporaryFolder.class)

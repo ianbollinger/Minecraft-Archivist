@@ -17,10 +17,10 @@
 package org.celeria.minecraft.backup;
 
 import java.util.*;
-import org.bukkit.*;
-import org.bukkit.util.config.Configuration;
 import com.google.common.collect.*;
 import com.google.inject.*;
+import org.bukkit.*;
+import org.bukkit.util.config.Configuration;
 
 class WorldListProvider implements Provider<Iterable<World>> {
     private final Configuration configuration;
