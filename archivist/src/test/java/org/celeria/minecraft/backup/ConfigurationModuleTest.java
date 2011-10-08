@@ -17,13 +17,13 @@
 package org.celeria.minecraft.backup;
 
 import static org.mockito.Mockito.*;
+import com.google.inject.Inject;
 import org.apache.commons.vfs2.*;
 import org.bukkit.Server;
 import org.bukkit.util.config.Configuration;
 import org.jukito.JukitoRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import com.google.inject.Inject;
 
 @RunWith(JukitoRunner.class)
 public class ConfigurationModuleTest {

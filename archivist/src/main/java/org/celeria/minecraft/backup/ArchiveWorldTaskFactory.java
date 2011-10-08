@@ -45,8 +45,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
             final CompressionLevel compressionLevel,
             final DateTimeFormatter dateFormatter,
             final FileProvider<FileSystemManager> fileSystemProvider,
-            @TemporaryFolder
-            final FileProvider<FileObject> temporaryFolderProvider,
+            @TemporaryFolder final FileProvider<FileObject> temporaryFolderProvider,
             @BackupFolder final FileProvider<FileObject> backupFolderProvider) {
         this.log = log;
         this.checksum = checksum;
@@ -58,56 +57,53 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
     }
 
     @Override
-    public WorldTask create(final World world) throws FileSystemException {
-        // TODO: this can throw an exception, log it!
-        final FileSystemManager fileSystem = fileSystemProvider.get();
-        // TODO: this can throw an exception, log it!
-        final FileObject temporaryFolder = temporaryFolderProvider.get();
-        final FileObject worldFolder = folderFor(world, fileSystem);
-        final FileObject temporaryWorldFolder = temporaryFolderFor(world,
+    public WorldTask create(final World world) {
+        final FileSystemManager fileSystem;
+        try {
+            fileSystem = fileSystemProvider.get();
+        } catch (final FileSystemException e) {
+            log.error(ErrorMessage.CANNOT_ACCESS_FILE_SYSTEM, world);
+            throw new WorldTaskException(e);
+        }
+        final FileObject temporaryFolder;
+        try {
+            temporaryFolder = temporaryFolderProvider.get();
+        } catch (final FileSystemException e) {
+            log.error(ErrorMessage.CANNOT_ACCESS_TEMPORARY_FOLDER, world);
+            throw new WorldTaskException(e);
+        }
+        final String worldName = world.getName();
+        final FileObject worldFolder = folderFor(worldName, fileSystem);
+        final FileObject temporaryWorldFolder = resolveFile(worldName,
                 temporaryFolder, fileSystem);
         final ZipOutputStream archive = archiveFor(world, fileSystem);
         return new ArchiveWorldTask(log, worldFolder, temporaryWorldFolder,
                 archive, world);
     }
 
-    private FileObject folderFor(final World world,
-            final FileSystemManager fileSystem) throws FileSystemException {
-        final String worldName = world.getName();
+    private FileObject folderFor(final String name,
+            final FileSystemManager fileSystem) {
         try {
-            return fileSystem.resolveFile(worldName);
+            return fileSystem.resolveFile(name);
         } catch (final FileSystemException e) {
-            log.error(LogMessage.INVALID_FILE_NAME, worldName);
-            throw e;
+            log.error(ErrorMessage.INVALID_FILE_NAME, name);
+            throw new WorldTaskException(e);
         }
     }
 
-    private FileObject temporaryFolderFor(final World world,
-            final FileObject temporaryFolder,
-            final FileSystemManager fileSystem)
-            throws FileSystemException {
-        final String worldName = world.getName();
-        return resolveFile(worldName, temporaryFolder, fileSystem);
-    }
-
     private FileObject resolveFile(final String name, final FileObject path,
-            final FileSystemManager fileSystem) throws FileSystemException {
+            final FileSystemManager fileSystem) {
         try {
             return fileSystem.resolveFile(path, name);
         } catch (final FileSystemException e) {
-            log.error(LogMessage.INVALID_FILE_NAME, name);
-            throw e;
+            log.error(ErrorMessage.INVALID_FILE_NAME, name);
+            throw new WorldTaskException(e);
         }
     }
 
     private ZipOutputStream archiveFor(final World world,
-            final FileSystemManager fileSystem) throws FileSystemException {
-        // TODO: this can throw an exception, log it!
-        final FileObject backupFolder = backupFolderProvider.get();
-        final String name = world.getName() + "_"
-                + dateTimeFormatter.print(DateTime.now()) + ".zip";
-        final FileObject archiveFile = resolveFile(name, backupFolder,
-                fileSystem);
+            final FileSystemManager fileSystem) {
+        final FileObject archiveFile = getArchiveFile(world, fileSystem);
         final OutputStream output = getOutputStream(archiveFile);
         final OutputStream checkedOutput = new CheckedOutputStream(output,
                 checksum);
@@ -118,13 +114,33 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         return zipOutput;
     }
 
-    private OutputStream getOutputStream(final FileObject file)
-            throws FileSystemException {
+    private FileObject getArchiveFile(final World world,
+            final FileSystemManager fileSystem) {
+        final FileObject backupFolder;
         try {
-            return file.getContent().getOutputStream();
+            backupFolder = backupFolderProvider.get();
         } catch (final FileSystemException e) {
-            log.error(LogMessage.ERROR_OPENING, file);
-            throw e;
+            log.error(ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER);
+            throw new WorldTaskException(e);
+        }
+        final String name = world.getName() + "_"
+                + dateTimeFormatter.print(DateTime.now()) + ".zip";
+        return resolveFile(name, backupFolder, fileSystem);
+    }
+
+    private OutputStream getOutputStream(final FileObject file) {
+        FileContent content;
+        try {
+            content = file.getContent();
+        } catch (final FileSystemException e) {
+            log.error(ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING, file);
+            throw new WorldTaskException(e);
+        }
+        try {
+            return content.getOutputStream();
+        } catch (final FileSystemException e) {
+            log.error(ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING, file);
+            throw new WorldTaskException(e);
         }
     }
 }

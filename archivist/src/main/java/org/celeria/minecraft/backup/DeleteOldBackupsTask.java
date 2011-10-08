@@ -56,7 +56,7 @@ class DeleteOldBackupsTask implements Runnable {
                 deleteBackupIfOld(backup);
             }
         } catch (final FileSystemException e) {
-            log.error(LogMessage.FOLDER_INACCESSIBLE);
+            log.error(ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER);
         }
     }
 
@@ -66,7 +66,7 @@ class DeleteOldBackupsTask implements Runnable {
                 deleteBackup(backup);
             }
         } catch (final FileSystemException e) {
-            log.error(LogMessage.FILE_INACCESSIBLE, backup);
+            log.error(ErrorMessage.CANNOT_ACCESS_BACKUP, backup);
         }
     }
 
@@ -81,7 +81,7 @@ class DeleteOldBackupsTask implements Runnable {
             backup.delete();
             log.info(LogMessage.DELETED_BACKUP, backup);
         } catch (final FileSystemException e) {
-            log.warn(LogMessage.ERROR_DELETING_BACKUP, backup);
+            log.warn(ErrorMessage.CANNOT_DELETE_BACKUP, backup);
         }
     }
 }

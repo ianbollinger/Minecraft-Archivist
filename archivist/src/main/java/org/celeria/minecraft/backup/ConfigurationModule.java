@@ -45,8 +45,7 @@ class ConfigurationModule extends AbstractModule {
         install(ThrowingProviderBinder.forModule(this));
     }
 
-    @CheckedProvides(FileProvider.class)
-    @BackupFolder
+    @CheckedProvides(FileProvider.class) @BackupFolder @Singleton
     public FileObject provideBackupFolder(final Configuration configuration,
             final FileProvider<FileSystemManager> fileSystemProvider)
             throws FileSystemException {
@@ -58,22 +57,20 @@ class ConfigurationModule extends AbstractModule {
         return folder;
     }
 
-    @Provides
-    @BackUpEndedMessage
+    @Provides @BackUpEndedMessage @Singleton
     public String provideBackUpEndedMessage(final Configuration configuration) {
         return configuration.getString("backup-ended-message", ChatColor.GREEN
                 + "[Archivist] Backup ended.");
     }
 
-    @Provides
-    @BackUpStartedMessage
+    @Provides @BackUpStartedMessage @Singleton
     public String provideBackUpStartedMessage(
             final Configuration configuration) {
         return configuration.getString("backup-started-message",
                 ChatColor.GREEN + "[Archivist] Backup started.");
     }
 
-    @Provides
+    @Provides @Singleton
     public CompressionLevel provideCompressionLevel(
             final Configuration configuration) {
         final String level = configuration.getString("compression-level",
@@ -81,8 +78,7 @@ class ConfigurationModule extends AbstractModule {
         return CompressionLevel.valueOf(level);
     }
 
-    @Provides
-    @DurationToKeepBackups
+    @Provides @DurationToKeepBackups @Singleton
     public long provideDurationToKeepBackups(
             final Configuration configuration) {
         final int durationToKeepBackups = configuration.getInt(
@@ -90,15 +86,20 @@ class ConfigurationModule extends AbstractModule {
         return Math.max(1, durationToKeepBackups);
     }
 
-    @Provides
+    @Provides @Singleton
     public Iterable<World> provideWorlds(final Configuration configuration,
             final Server server) {
         final List<String> worldNamesList = configuration.getStringList(
                 "worlds", ImmutableList.<String>of());
         final List<World> worldList = server.getWorlds();
         if (worldNamesList.isEmpty()) {
-            return server.getWorlds();
+            return worldList;
         }
+        return filteredWorldList(worldNamesList, worldList);
+    }
+
+    private Set<World> filteredWorldList(final List<String> worldNamesList,
+            final List<World> worldList) {
         final Set<String> worldNames = ImmutableSet.copyOf(worldNamesList);
         final Set<World> worlds = Sets.newHashSet();
         for (final World world : worldList) {
@@ -109,8 +110,7 @@ class ConfigurationModule extends AbstractModule {
         return worlds;
     }
 
-    @Provides
-    @BackUpInterval
+    @Provides @BackUpInterval @Singleton
     public long provideBackUpInterval(final Configuration configuration) {
         final int backUpInterval = configuration.getInt("backup-interval",
                 DEFAULT_BACK_UP_INTERVAL);

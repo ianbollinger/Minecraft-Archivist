@@ -16,13 +16,29 @@
 
 package org.celeria.minecraft.backup;
 
-import ch.qos.cal10n.*;
+import ch.qos.cal10n.BaseName;
+import ch.qos.cal10n.Locale;
+import ch.qos.cal10n.LocaleData;
 
-@BaseName("log_message")
+@BaseName("error_message")
 @LocaleData({@Locale("en_US")})
-public enum LogMessage {
-    PLUGIN_ENABLED,
-    PLUGIN_DISABLED,
-    BACKING_UP_WORLD,
-    DELETED_BACKUP
+public enum ErrorMessage {
+    CANNOT_ACCESS_BACKUP,
+    CANNOT_ACCESS_BACKUP_FOLDER,
+    CANNOT_ACCESS_FILE,
+    CANNOT_ACCESS_FILE_SYSTEM,
+    CANNOT_ACCESS_FOLDER,
+    CANNOT_ACCESS_TEMPORARY_FOLDER,
+    CANNOT_ARCHIVE_TEMPORARY_FOLDER,
+    CANNOT_COPY_WORLD,
+    CANNOT_CREATE_TEMPORARY_FOLDER,
+    CANNOT_DELETE_BACKUP,
+    CANNOT_DELETE_TEMPORARY_FOLDER,
+    CANNOT_DETERMINE_FILE_TYPE,
+    CANNOT_OPEN_FILE_FOR_READING,
+    CANNOT_OPEN_FILE_FOR_WRITING,
+    CANNOT_READ_FILE,
+    CANNOT_WRITE_TO_ARCHIVE,
+    INVALID_FILE_NAME,
+    TASK_FAILED
 }

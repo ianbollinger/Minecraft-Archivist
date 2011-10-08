@@ -21,7 +21,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.*;
 import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
-import org.apache.commons.vfs2.*;
 import org.bukkit.*;
 import org.celeria.minecraft.guice.TaskScheduler;
 import org.slf4j.cal10n.LocLogger;
@@ -80,7 +79,7 @@ public class BackUpWorldsTask implements Runnable {
         final WorldTask factory;
         try {
             factory = worldTaskFactory.create(world);
-        } catch (final FileSystemException e) {
+        } catch (final WorldTaskException e) {
             return;
         }
         scheduler.runAsynchronousTask(factory);

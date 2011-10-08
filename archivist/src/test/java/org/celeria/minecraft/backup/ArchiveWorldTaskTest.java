@@ -41,11 +41,9 @@ public class ArchiveWorldTaskTest {
     }
 
     @Inject private ArchiveWorldTask task;
-    @Inject private World world;
     @Inject @WorldFolder private FileObject worldFolder;
     @Inject @TemporaryWorldFolder private FileObject temporaryWorldFolder;
     @Inject private ZipOutputStream archive;
-
     @Inject @Named("file") private FileObject file;
     @Inject @Named("folder") private FileObject folder;
     @Inject @Named("file") private FileName fileName;
@@ -103,15 +101,20 @@ public class ArchiveWorldTaskTest {
     }
 
     @Test
-    public void testRun() throws IOException {
+    public void testRun(final World world) throws Exception {
         task.run();
         verify(world).setAutoSave(false);
         verify(world).save();
+        verify(world).setAutoSave(true);
         verify(temporaryWorldFolder)
                 .copyFrom(worldFolder, Selectors.SELECT_ALL);
-        verify(world).setAutoSave(true);
         verify(archive).putNextEntry(Matchers.<ZipEntry>any());
         verify(archive).close();
+    }
+
+    @Test
+    public void shouldDeleteTemporaryFolder() throws Exception {
+        task.run();
         verify(temporaryWorldFolder).delete(Selectors.SELECT_ALL);
         verify(temporaryWorldFolder).delete();
     }
