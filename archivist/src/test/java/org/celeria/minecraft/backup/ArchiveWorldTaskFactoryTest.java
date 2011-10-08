@@ -31,7 +31,7 @@ public class ArchiveWorldTaskFactoryTest {
         @Override
         protected void configureTest() {
             bind(CompressionLevel.class).toInstance(
-                    CompressionLevel.DEFAULT_COMPRESSION);
+                    CompressionLevel.DEFAULT);
         }
     }
 
@@ -50,7 +50,7 @@ public class ArchiveWorldTaskFactoryTest {
     }
 
     @Test
-    public void testCreate(final World world) throws Exception {
+    public void testCreate(final World world) {
         factory.create(world);
         // TODO: verify something!
     }

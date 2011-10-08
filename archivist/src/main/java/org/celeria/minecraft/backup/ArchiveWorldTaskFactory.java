@@ -45,7 +45,8 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
             final CompressionLevel compressionLevel,
             final DateTimeFormatter dateFormatter,
             final FileProvider<FileSystemManager> fileSystemProvider,
-            @TemporaryFolder final FileProvider<FileObject> temporaryFolderProvider,
+            @TemporaryFolder
+            final FileProvider<FileObject> temporaryFolderProvider,
             @BackupFolder final FileProvider<FileObject> backupFolderProvider) {
         this.log = log;
         this.checksum = checksum;
@@ -58,27 +59,30 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
 
     @Override
     public WorldTask create(final World world) {
-        final FileSystemManager fileSystem;
-        try {
-            fileSystem = fileSystemProvider.get();
-        } catch (final FileSystemException e) {
-            log.error(ErrorMessage.CANNOT_ACCESS_FILE_SYSTEM, world);
-            throw new WorldTaskException(e);
-        }
-        final FileObject temporaryFolder;
-        try {
-            temporaryFolder = temporaryFolderProvider.get();
-        } catch (final FileSystemException e) {
-            log.error(ErrorMessage.CANNOT_ACCESS_TEMPORARY_FOLDER, world);
-            throw new WorldTaskException(e);
-        }
         final String worldName = world.getName();
-        final FileObject worldFolder = folderFor(worldName, fileSystem);
+        final FileSystemManager fileSystem = getFileSystemManager();
         final FileObject temporaryWorldFolder = resolveFile(worldName,
-                temporaryFolder, fileSystem);
-        final ZipOutputStream archive = archiveFor(world, fileSystem);
-        return new ArchiveWorldTask(log, worldFolder, temporaryWorldFolder,
-                archive, world);
+                getTemporaryFolder(), fileSystem);
+        return new ArchiveWorldTask(log, folderFor(worldName, fileSystem),
+                temporaryWorldFolder, archiveFor(world, fileSystem), world);
+    }
+
+    private FileSystemManager getFileSystemManager() {
+        try {
+            return fileSystemProvider.get();
+        } catch (final FileSystemException e) {
+            log.error(ErrorMessage.CANNOT_ACCESS_FILE_SYSTEM);
+            throw new WorldTaskException(e);
+        }
+    }
+
+    private FileObject getTemporaryFolder() {
+        try {
+            return temporaryFolderProvider.get();
+        } catch (final FileSystemException e) {
+            log.error(ErrorMessage.CANNOT_ACCESS_TEMPORARY_FOLDER);
+            throw new WorldTaskException(e);
+        }
     }
 
     private FileObject folderFor(final String name,

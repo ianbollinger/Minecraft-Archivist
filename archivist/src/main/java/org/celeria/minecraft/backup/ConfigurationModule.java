@@ -74,7 +74,7 @@ class ConfigurationModule extends AbstractModule {
     public CompressionLevel provideCompressionLevel(
             final Configuration configuration) {
         final String level = configuration.getString("compression-level",
-                CompressionLevel.DEFAULT_COMPRESSION.toString());
+                CompressionLevel.DEFAULT.toString());
         return CompressionLevel.valueOf(level);
     }
 

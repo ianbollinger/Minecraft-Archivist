@@ -19,10 +19,10 @@ package org.celeria.minecraft.backup;
 import java.util.zip.Deflater;
 
 enum CompressionLevel {
-    DEFAULT_COMPRESSION(Deflater.DEFAULT_COMPRESSION),
-    NO_COMPRESSION(Deflater.NO_COMPRESSION),
-    BEST_SPEED(Deflater.BEST_SPEED),
-    BEST_COMPRESSION(Deflater.BEST_COMPRESSION);
+    DEFAULT(Deflater.DEFAULT_COMPRESSION),
+    NONE(Deflater.NO_COMPRESSION),
+    FASTEST(Deflater.BEST_SPEED),
+    BEST(Deflater.BEST_COMPRESSION);
 
     private final int level;
 

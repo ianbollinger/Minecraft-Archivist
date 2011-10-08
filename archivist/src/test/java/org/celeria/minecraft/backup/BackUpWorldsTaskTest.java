@@ -19,7 +19,6 @@ package org.celeria.minecraft.backup;
 import static org.mockito.Mockito.*;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import org.apache.commons.vfs2.*;
 import org.bukkit.*;
 import org.celeria.minecraft.guice.TaskScheduler;
 import org.jukito.JukitoRunner;
@@ -38,7 +37,7 @@ public class BackUpWorldsTaskTest {
     @Inject private WorldTask worldTask;
 
     @Before
-    public void setUp() throws FileSystemException {
+    public void setUp() {
         when(worldTaskFactory.create(Matchers.<World>any())).thenReturn(
                 worldTask);
         when(worlds.iterator()).thenReturn(

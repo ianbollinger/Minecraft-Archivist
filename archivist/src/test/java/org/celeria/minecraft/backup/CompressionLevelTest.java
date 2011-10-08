@@ -24,6 +24,6 @@ public class CompressionLevelTest {
     @Test
     public void testAsInteger() {
         assertEquals(Deflater.DEFAULT_COMPRESSION,
-                CompressionLevel.DEFAULT_COMPRESSION.asInteger());
+                CompressionLevel.DEFAULT.asInteger());
     }
 }

@@ -17,7 +17,6 @@
 package org.celeria.minecraft.backup;
 
 import static org.mockito.Mockito.*;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -110,11 +109,6 @@ public class ArchiveWorldTaskTest {
                 .copyFrom(worldFolder, Selectors.SELECT_ALL);
         verify(archive).putNextEntry(Matchers.<ZipEntry>any());
         verify(archive).close();
-    }
-
-    @Test
-    public void shouldDeleteTemporaryFolder() throws Exception {
-        task.run();
         verify(temporaryWorldFolder).delete(Selectors.SELECT_ALL);
         verify(temporaryWorldFolder).delete();
     }

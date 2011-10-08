@@ -56,7 +56,7 @@ public class ConfigurationModuleTest {
     @Test
     public void testProvideCompressionLevel() {
         when(configuration.getString(anyString(), anyString())).thenReturn(
-                CompressionLevel.DEFAULT_COMPRESSION.toString());
+                CompressionLevel.DEFAULT.toString());
         module.provideCompressionLevel(configuration);
         // TODO: verify something!
     }
