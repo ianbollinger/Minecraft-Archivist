@@ -361,8 +361,8 @@
               <execution>
                 <phase>verify</phase>
                 <goals>
-                  <goal>check</goal>
-                  <goal>cpd-check</goal>
+                  <goal>pmd</goal>
+                  <goal>cpd</goal>
                 </goals>
               </execution>
             </executions>
