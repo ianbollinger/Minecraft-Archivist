@@ -21,8 +21,9 @@ import static org.mockito.Mockito.*;
 import com.google.inject.Inject;
 import org.bukkit.command.*;
 import org.bukkit.plugin.Plugin;
-import org.celeria.minecraft.backup.Archivist.BackUpInterval;
 import org.celeria.minecraft.guice.TaskScheduler;
+import org.joda.time.Duration;
+import org.joda.time.Period;
 import org.jukito.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -33,6 +34,7 @@ public class ArchivistTest {
         @Override
         protected void configureTest() {
             bindMock(Plugin.class);
+            bind(Duration.class).toInstance(new Duration(20));
             try {
                 bind(PluginCommand.class).toConstructor(
                         PluginCommand.class.getDeclaredConstructor(
@@ -49,7 +51,7 @@ public class ArchivistTest {
     @Inject private CommandExecutor manualBackUpExecutor;
     @Inject private DeleteOldBackupsTask deleteOldBackupsTask;
     @Inject private BackUpWorldsTask backUpTask;
-    @Inject @BackUpInterval private long backUpInterval;
+    @Inject private Period backUpPeriod;
 
     @Before
     public void setUp() {
@@ -61,9 +63,9 @@ public class ArchivistTest {
         mineBackUp.run();
         verify(scheduler).cancelTasks();
         verify(scheduler).repeatAsynchronousTask(deleteOldBackupsTask,
-                2 * backUpInterval);
-        verify(scheduler).repeatSynchronousTask(backUpTask, backUpInterval,
-                backUpInterval);
+                2 * backUpPeriod.getMillis());
+        verify(scheduler).repeatSynchronousTask(backUpTask,
+                backUpPeriod.getMillis(), backUpPeriod.getMillis());
     }
 
     public void shouldSetManualBackUpExecutor() {

@@ -67,8 +67,10 @@ public class ConfigurationModuleTest {
     }
 
     @Test
-    public void testProvideBackUpInterval() {
-        module.provideBackUpInterval(configuration);
+    public void testProvideBackUpPeriod() {
+        when(configuration.getString(anyString(), anyString())).thenReturn(
+                "PT20M");
+        module.provideBackUpPeriod(configuration);
         // TODO: verify something!
     }
 }

@@ -27,7 +27,7 @@ import org.bukkit.util.config.Configuration;
 import org.slf4j.cal10n.*;
 
 @Immutable
-public final class BukkitPluginModule extends AbstractModule {
+final class BukkitPluginModule extends AbstractModule {
     private static final String BUKKIT_LOGGER_NAME = "Minecraft";
     private final Plugin plugin;
     private final Module module;

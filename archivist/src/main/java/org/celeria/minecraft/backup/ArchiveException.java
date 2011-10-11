@@ -16,8 +16,11 @@
 
 package org.celeria.minecraft.backup;
 
-public class ArchiveException extends RuntimeException {
-    private static final long serialVersionUID = 9131477995421035200L;
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
+class ArchiveException extends RuntimeException {
+    private static final long serialVersionUID = 7704356508523320198L;
 
     ArchiveException(final Throwable cause) {
         super(cause);

@@ -16,32 +16,26 @@
 
 package org.celeria.minecraft.backup;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.*;
 import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
 import org.apache.commons.vfs2.*;
 import org.celeria.minecraft.backup.BackUpWorldsTask.BackupFolder;
-import org.celeria.minecraft.backup.ConfigurationModule.DurationToKeepBackups;
+import org.joda.time.*;
 import org.slf4j.cal10n.LocLogger;
 
 @Immutable
 class DeleteOldBackupsTask implements Runnable {
-    @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
-    public @interface CurrentTime {}
-
     private final LocLogger log;
     private final FileProvider<FileObject> backupFolderProvider;
-    private final long durationToKeepBackups;
-    private final long currentTime;
+    private final Duration durationToKeepBackups;
+    private final Instant currentTime;
 
     @Inject
     DeleteOldBackupsTask(final LocLogger log,
             @BackupFolder
             final FileProvider<FileObject> backupFolderProvider,
-            @DurationToKeepBackups final long durationToKeepBackups,
-            @CurrentTime final long currentTime) {
+            final Duration durationToKeepBackups,
+            final Instant currentTime) {
         this.log = log;
         this.backupFolderProvider = backupFolderProvider;
         this.durationToKeepBackups = durationToKeepBackups;
@@ -55,7 +49,7 @@ class DeleteOldBackupsTask implements Runnable {
         }
     }
 
-    private FileObject[] getBackupFolderContents() { 
+    private FileObject[] getBackupFolderContents() {
         try {
             return backupFolderProvider.get().getChildren();
         } catch (final FileSystemException e) {
@@ -77,7 +71,8 @@ class DeleteOldBackupsTask implements Runnable {
     private boolean backupIsOld(final FileObject backup)
             throws FileSystemException {
         final long lastModifiedTime = backup.getContent().getLastModifiedTime();
-        return currentTime - durationToKeepBackups > lastModifiedTime;
+        final Instant instant = new Instant(lastModifiedTime);
+        return currentTime.plus(durationToKeepBackups).isAfter(instant);
     }
 
     private void deleteBackup(final FileObject backup) {

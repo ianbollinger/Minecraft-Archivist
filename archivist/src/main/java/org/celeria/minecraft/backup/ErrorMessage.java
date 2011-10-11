@@ -22,7 +22,7 @@ import ch.qos.cal10n.LocaleData;
 
 @BaseName("error_message")
 @LocaleData({@Locale("en_US")})
-public enum ErrorMessage {
+enum ErrorMessage {
     CANNOT_ACCESS_BACKUP,
     CANNOT_ACCESS_BACKUP_FOLDER,
     CANNOT_ACCESS_FILE,
@@ -30,8 +30,9 @@ public enum ErrorMessage {
     CANNOT_ACCESS_FOLDER,
     CANNOT_ACCESS_TEMPORARY_FOLDER,
     CANNOT_ARCHIVE_TEMPORARY_FOLDER,
+    CANNOT_CLOSE_ARCHIVE,
     CANNOT_CLOSE_FILE,
-    CANNOT_COPY_WORLD,  
+    CANNOT_COPY_WORLD,
     CANNOT_CREATE_TEMPORARY_FOLDER,
     CANNOT_DELETE_BACKUP,
     CANNOT_DELETE_TEMPORARY_FOLDER,

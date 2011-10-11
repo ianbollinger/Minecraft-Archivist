@@ -16,27 +16,22 @@
 
 package org.celeria.minecraft.backup;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.*;
-import java.lang.annotation.*;
 import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
 import org.bukkit.command.*;
 import org.celeria.minecraft.guice.*;
+import org.joda.time.Period;
 import org.slf4j.cal10n.LocLogger;
 
 @Immutable
 class Archivist implements BukkitPlugin {
-    @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
-    public @interface BackUpInterval {}
-
     private final LocLogger log;
     private final TaskScheduler scheduler;
     private final PluginCommand pluginCommand;
     private final CommandExecutor manualBackUpExecutor;
     private final Runnable cleanBackupsTask;
     private final Runnable backUpTask;
-    private final long backUpInterval;
+    private final Period backUpPeriod;
 
     @Inject
     Archivist(final LocLogger log, final TaskScheduler scheduler,
@@ -44,14 +39,14 @@ class Archivist implements BukkitPlugin {
             final DeleteOldBackupsTask deleteOldBackupsTask,
             final CommandExecutor manualBackUpExecutor,
             final BackUpWorldsTask backUpTask,
-            @BackUpInterval final long interval) {
+            final Period backUpPeriod) {
         this.log = log;
         this.scheduler = scheduler;
         this.pluginCommand = pluginCommand;
         this.cleanBackupsTask = deleteOldBackupsTask;
         this.manualBackUpExecutor = manualBackUpExecutor;
         this.backUpTask = backUpTask;
-        this.backUpInterval = interval;
+        this.backUpPeriod = backUpPeriod;
     }
 
     @Override
@@ -76,13 +71,15 @@ class Archivist implements BukkitPlugin {
     }
 
     // TODO: create generic task (value) object.
+    // TODO: augment scheduler interface to take period objects.
     private void scheduleBackUpCleaner() {
-        scheduler.repeatAsynchronousTask(cleanBackupsTask, 2 * backUpInterval);
+        scheduler.repeatAsynchronousTask(cleanBackupsTask,
+                2 * backUpPeriod.getMillis());
     }
 
     private void scheduleBackUpTask() {
-        scheduler.repeatSynchronousTask(backUpTask, backUpInterval,
-                backUpInterval);
+        scheduler.repeatSynchronousTask(backUpTask, backUpPeriod.getMillis(),
+                backUpPeriod.getMillis());
     }
 
     @Override

@@ -21,25 +21,23 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.apache.commons.vfs2.*;
 import org.celeria.minecraft.backup.BackUpWorldsTask.BackupFolder;
-import org.celeria.minecraft.backup.ConfigurationModule.DurationToKeepBackups;
-import org.celeria.minecraft.backup.DeleteOldBackupsTask.CurrentTime;
+import org.joda.time.*;
 import org.jukito.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 
 @RunWith(JukitoRunner.class)
 public class DeleteOldBackupsTaskTest {
-    private static final long NEW_TIME = 100;
-    private static final long OLD_TIME = -100;
-    private static final long CURRENT_TIME = 101;
-    private static final long DURATION = 20;
+    private static final Instant CURRENT_TIME = Instant.parse("T00:00:59");
+    private static final long NEW_TIME = CURRENT_TIME.getMillis() * 2;
+    private static final long OLD_TIME = 0;
+    private static final Duration DURATION = Duration.parse("PT20S");
 
     public static class Module extends JukitoModule {
         @Override
         protected void configureTest() {
-            bindConstant().annotatedWith(CurrentTime.class).to(CURRENT_TIME);
-            bindConstant().annotatedWith(DurationToKeepBackups.class).to(
-                    DURATION);
+            bind(Instant.class).toInstance(CURRENT_TIME);
+            bind(Duration.class).toInstance(DURATION);
         }
     }
 

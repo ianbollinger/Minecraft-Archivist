@@ -17,13 +17,14 @@
 package org.celeria.minecraft.backup;
 
 import java.io.File;
+import javax.annotation.concurrent.Immutable;
 import org.apache.commons.vfs2.*;
 import org.apache.commons.vfs2.cache.DefaultFilesCache;
 import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
 import org.apache.commons.vfs2.provider.local.DefaultLocalFileProvider;
 
-class FileSystemManagerProvider implements
-        FileProvider<FileSystemManager> {
+@Immutable
+class FileSystemManagerProvider implements FileProvider<FileSystemManager> {
     private final DefaultFileSystemManager manager;
     private final DefaultLocalFileProvider provider;
     private final DefaultFilesCache cache;

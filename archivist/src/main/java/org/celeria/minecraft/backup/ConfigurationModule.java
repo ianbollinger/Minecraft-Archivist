@@ -16,28 +16,18 @@
 
 package org.celeria.minecraft.backup;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.*;
+import static org.celeria.minecraft.backup.ConfigurationKey.*;
 import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
-import com.google.inject.throwingproviders.CheckedProvides;
-import com.google.inject.throwingproviders.ThrowingProviderBinder;
+import com.google.inject.throwingproviders.*;
 import org.apache.commons.vfs2.*;
 import org.bukkit.*;
 import org.bukkit.util.config.Configuration;
-import org.celeria.minecraft.backup.Archivist.*;
 import org.celeria.minecraft.backup.BackUpWorldsTask.*;
+import org.joda.time.*;
 
 @Immutable
 class ConfigurationModule extends AbstractModule {
-    @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
-    public @interface DurationToKeepBackups {}
-
-    private static final int DEFAULT_BACK_UP_INTERVAL = 3600 * 20;
-    private static final int DEFAULT_DURATION_TO_KEEP_BACKUPS = 5 * 1000 * 60
-            * 60 * 24;
-
     @Override
     protected void configure() {
         bind(new TypeLiteral<Iterable<World>>() {})
@@ -49,47 +39,50 @@ class ConfigurationModule extends AbstractModule {
     public FileObject provideBackupFolder(final Configuration configuration,
             final FileProvider<FileSystemManager> fileSystemProvider)
             throws FileSystemException {
-        final String folderName = configuration.getString("backup-folder",
-                "archives");
-        final FileObject folder = fileSystemProvider.get().resolveFile(
-                folderName);
+        final String folderName = getProperty(configuration, BACKUP_FOLDER);
+        final FileSystemManager fileSystemManager = fileSystemProvider.get();
+        final FileObject folder = fileSystemManager.resolveFile(folderName);
         folder.createFolder();
         return folder;
     }
 
     @Provides @BackUpEndedMessage @Singleton
     public String provideBackUpEndedMessage(final Configuration configuration) {
-        return configuration.getString("backup-ended-message", ChatColor.GREEN
-                + "[Archivist] Backup ended.");
+        return configuration.getString(getProperty(configuration,
+                BACK_UP_ENDED_MESSAGE));
     }
 
     @Provides @BackUpStartedMessage @Singleton
     public String provideBackUpStartedMessage(
             final Configuration configuration) {
-        return configuration.getString("backup-started-message",
-                ChatColor.GREEN + "[Archivist] Backup started.");
+        return configuration.getString(getProperty(configuration,
+                BACK_UP_STARTED_MESSAGE));
     }
 
     @Provides @Singleton
     public CompressionLevel provideCompressionLevel(
             final Configuration configuration) {
-        final String level = configuration.getString("compression-level",
-                CompressionLevel.DEFAULT.toString());
+        final String level = getProperty(configuration, COMPRESSION_LEVEL);
         return CompressionLevel.valueOf(level);
     }
 
-    @Provides @DurationToKeepBackups @Singleton
-    public long provideDurationToKeepBackups(
+    @Provides @Singleton
+    public Duration provideDurationToKeepBackups(
             final Configuration configuration) {
-        final int durationToKeepBackups = configuration.getInt(
-                "duration-to-keep-backups", DEFAULT_DURATION_TO_KEEP_BACKUPS);
-        return Math.max(1, durationToKeepBackups);
+        final String durationToKeepBackups = getProperty(configuration,
+                ConfigurationKey.DURATION_TO_KEEP_BACKUPS);
+        return Duration.parse(durationToKeepBackups);
     }
 
-    @Provides @BackUpInterval @Singleton
-    public long provideBackUpInterval(final Configuration configuration) {
-        final int backUpInterval = configuration.getInt("backup-interval",
-                DEFAULT_BACK_UP_INTERVAL);
-        return Math.max(1, backUpInterval);
+    @Provides @Singleton
+    public Period provideBackUpPeriod(final Configuration configuration) {
+        final String backUpPeriod = getProperty(configuration,
+                ConfigurationKey.BACK_UP_PERIOD);
+        return Period.parse(backUpPeriod);
+    }
+
+    private static String getProperty(final Configuration configuration,
+            final ConfigurationKey key) {
+        return configuration.getString(key.key(), key.defaultValue());
     }
 }

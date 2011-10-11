@@ -36,8 +36,8 @@ class Archive implements Closeable {
     }
 
     @Override
-    public void close() {
-        close(output);
+    public void close() throws IOException {
+        output.close();
     }
 
     public void write(final String name, final FileContent content) {

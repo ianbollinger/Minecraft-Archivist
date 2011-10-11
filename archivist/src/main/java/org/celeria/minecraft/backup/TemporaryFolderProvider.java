@@ -20,7 +20,7 @@ import com.google.inject.*;
 import org.apache.commons.vfs2.*;
 
 @Singleton
-public class TemporaryFolderProvider implements FileProvider<FileObject> {
+class TemporaryFolderProvider implements FileProvider<FileObject> {
     private static final int TEMPORARY_FOLDER_ATTEMPTS = 10000;
     private final FileProvider<FileSystemManager> fileSystemManagerProvider;
 

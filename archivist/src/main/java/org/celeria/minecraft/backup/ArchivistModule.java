@@ -27,9 +27,8 @@ import org.apache.commons.vfs2.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import org.celeria.minecraft.backup.ArchiveWorldTask.TemporaryFolder;
-import org.celeria.minecraft.backup.DeleteOldBackupsTask.CurrentTime;
 import org.celeria.minecraft.guice.BukkitPlugin;
-import org.joda.time.DateTimeFieldType;
+import org.joda.time.*;
 import org.joda.time.format.*;
 
 @Immutable
@@ -73,8 +72,8 @@ class ArchivistModule extends AbstractModule {
         return ISODateTimeFormat.forFields(fields, true, true);
     }
 
-    @Provides @CurrentTime
-    public long provideCurrentTime() {
-        return System.currentTimeMillis();
+    @Provides
+    public Instant provideCurrentTime() {
+        return Instant.now();
     }
 }

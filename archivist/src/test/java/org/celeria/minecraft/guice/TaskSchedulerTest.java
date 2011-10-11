@@ -45,7 +45,7 @@ import org.junit.runner.RunWith;
 
     @Test(expected = IllegalArgumentException.class)
     public void testRepeatAsynchronousTaskWithIllegalArgument() {
-        scheduler.repeatAsynchronousTask(task, 0);
+        scheduler.repeatAsynchronousTask(task, -1);
     }
 
     @Test(expected = NullPointerException.class)
@@ -67,7 +67,7 @@ import org.junit.runner.RunWith;
 
     @Test(expected = IllegalArgumentException.class)
     public void testRepeatSynchronousTaskWithIllegalPeroid() {
-        scheduler.repeatSynchronousTask(task, 0, 0);
+        scheduler.repeatSynchronousTask(task, 0, -1);
     }
 
     @Test

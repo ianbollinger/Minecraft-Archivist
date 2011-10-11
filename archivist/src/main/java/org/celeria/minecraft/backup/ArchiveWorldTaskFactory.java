@@ -138,7 +138,7 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         try {
             return backupFolderProvider.get();
         } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER); 
+            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER);
         }
     }
 

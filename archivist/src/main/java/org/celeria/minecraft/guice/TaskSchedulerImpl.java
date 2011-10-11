@@ -42,7 +42,7 @@ class TaskSchedulerImpl implements TaskScheduler {
     public void repeatAsynchronousTask(final Runnable task,
             final long period) {
         checkNotNull(task);
-        checkArgument(period > 0);
+        checkArgument(period >= 0);
         final int delay = 0;
         scheduler.scheduleAsyncRepeatingTask(plugin, task, delay, period);
     }
@@ -52,7 +52,7 @@ class TaskSchedulerImpl implements TaskScheduler {
             final long delay, final long period) {
         checkNotNull(task);
         checkArgument(delay >= 0);
-        checkArgument(period > 0);
+        checkArgument(period >= 0);
         scheduler.scheduleSyncRepeatingTask(plugin, task, delay, period);
     }
 

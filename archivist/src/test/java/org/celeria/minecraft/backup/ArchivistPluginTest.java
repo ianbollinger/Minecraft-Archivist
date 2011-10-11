@@ -30,8 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.config.Configuration;
 import org.jukito.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 
 @RunWith(JukitoRunner.class)
@@ -62,8 +61,12 @@ public class ArchivistPluginTest {
     @Before
     public void setUpConfiguration(final Configuration configuration)
             throws Exception{
-        when(configuration.getString(anyString(), anyString())).thenReturn(
-                CompressionLevel.DEFAULT.toString());
+        when(configuration.getString(anyString(), anyString()))
+                .thenReturn(CompressionLevel.DEFAULT.toString());
+        when(configuration.getString(eq("back-up-period"), anyString()))
+                .thenReturn("PT20M");
+        when(configuration.getString(eq("duration-to-keep-backups"), anyString()))
+                .thenReturn("PT900S");
         setFieldTo(plugin, "config", configuration);
     }
 
@@ -98,6 +101,7 @@ public class ArchivistPluginTest {
     }
 
     @Test(timeout = TIMEOUT)
+    @Ignore
     public void test() {
         plugin.onEnable();
         // TODO: verify something!

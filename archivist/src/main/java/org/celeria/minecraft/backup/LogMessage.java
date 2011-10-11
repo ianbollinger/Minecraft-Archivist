@@ -20,7 +20,7 @@ import ch.qos.cal10n.*;
 
 @BaseName("log_message")
 @LocaleData({@Locale("en_US")})
-public enum LogMessage {
+enum LogMessage {
     PLUGIN_ENABLED,
     PLUGIN_DISABLED,
     BACKING_UP_WORLD,

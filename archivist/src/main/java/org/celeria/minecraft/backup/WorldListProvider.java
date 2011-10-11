@@ -17,11 +17,13 @@
 package org.celeria.minecraft.backup;
 
 import java.util.*;
+import javax.annotation.concurrent.Immutable;
 import com.google.common.collect.*;
 import com.google.inject.*;
 import org.bukkit.*;
 import org.bukkit.util.config.Configuration;
 
+@Immutable
 class WorldListProvider implements Provider<Iterable<World>> {
     private final Configuration configuration;
     private final Server server;

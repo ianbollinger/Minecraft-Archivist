@@ -26,7 +26,7 @@ import org.celeria.minecraft.guice.TaskScheduler;
 import org.slf4j.cal10n.LocLogger;
 
 @Immutable
-public class BackUpWorldsTask implements Runnable {
+class BackUpWorldsTask implements Runnable {
     @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)
     public @interface BackUpEndedMessage {}
     @BindingAnnotation @Target({FIELD, PARAMETER, METHOD}) @Retention(RUNTIME)

@@ -60,8 +60,13 @@ class ArchiveWorldTask implements WorldTask {
         } catch (final WorldTaskException e) {
             log.error(ErrorMessage.TASK_FAILED, e.getCause());
         } finally {
-            // TODO: this doesn't seem appropriate, unless I *get* the archiver.
-            archive.close();
+            try {
+                // TODO: this doesn't seem appropriate, unless I *get* the
+                // archiver.
+                archive.close();
+            } catch (final IOException e) {
+                log.warn(ErrorMessage.CANNOT_CLOSE_ARCHIVE);
+            }
         }
     }
 
