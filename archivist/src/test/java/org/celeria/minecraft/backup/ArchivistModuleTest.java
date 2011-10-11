@@ -40,7 +40,7 @@ public class ArchivistModuleTest {
     @Test
     public void testProvideDateTimeFormatter() {
         @SuppressWarnings("unused")
-        final DateTimeFormatter dateTimeFormatter = module.provideDateTimeFormatter();
+        final DateTimeFormatter formatter = module.provideDateTimeFormatter();
         // TODO: verify something.
     }
 

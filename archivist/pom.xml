@@ -373,6 +373,9 @@
               <effort>Max</effort>
               <threshold>Exp</threshold>
               <failOnError>false</failOnError>
+              <findbugsXmlOutput>true</findbugsXmlOutput>
+              <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+              <xmlOutput>true</xmlOutput>
             </configuration>
             <executions>
               <execution>
@@ -383,7 +386,6 @@
             </executions>
           </plugin>
 
-          <!--
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>javancss-maven-plugin</artifactId>
@@ -399,7 +401,6 @@
               </execution>
             </executions>
           </plugin>
-          -->
 
           <plugin>
             <groupId>org.codehaus.mojo</groupId>

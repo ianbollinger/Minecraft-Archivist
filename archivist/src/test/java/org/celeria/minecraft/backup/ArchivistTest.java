@@ -30,11 +30,13 @@ import org.junit.runner.RunWith;
 
 @RunWith(JukitoRunner.class)
 public class ArchivistTest {
+    private static final Duration DURATION = new Duration(20);
+
     public static class Module extends JukitoModule {
         @Override
         protected void configureTest() {
             bindMock(Plugin.class);
-            bind(Duration.class).toInstance(new Duration(20));
+            bind(Duration.class).toInstance(DURATION);
             try {
                 bind(PluginCommand.class).toConstructor(
                         PluginCommand.class.getDeclaredConstructor(
