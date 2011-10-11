@@ -358,7 +358,8 @@
             <executions>
               <execution>
                 <goals>
-                  <goal>check</goal>
+                  <goal>pmd</goal>
+                  <goal>cpd</goal>
                 </goals>
               </execution>
             </executions>
