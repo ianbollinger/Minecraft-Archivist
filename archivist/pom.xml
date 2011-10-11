@@ -312,6 +312,7 @@
       <build>
         <plugins>
 
+          <!--
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
@@ -324,6 +325,7 @@
               </execution>
             </executions>
           </plugin>
+          -->
 
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -357,6 +359,7 @@
             </configuration>
             <executions>
               <execution>
+                <phase>verify</phase>
                 <goals>
                   <goal>pmd</goal>
                   <goal>cpd</goal>
