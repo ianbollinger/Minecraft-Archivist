@@ -357,6 +357,7 @@
               </rulesets>
               <targetJdk>${target.jdk}</targetJdk>
             </configuration>
+            <!--
             <executions>
               <execution>
                 <phase>verify</phase>
@@ -368,6 +369,7 @@
                 </goals>
               </execution>
             </executions>
+            -->
           </plugin>
 
           <plugin>
