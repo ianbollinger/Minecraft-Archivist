@@ -77,6 +77,6 @@ class DeleteOldBackupsTask implements Runnable {
             throws FileSystemException {
         // TODO: try to move this further up the application stack.
         backup.delete();
-        log.info(LogMessage.DELETED_BACKUP, backup.getName().getBaseName());
+        log.info(LogMessage.DELETED_BACKUP, backup);
     }
 }
