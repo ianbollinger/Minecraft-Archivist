@@ -22,9 +22,7 @@ import java.lang.annotation.*;
 import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
 import org.bukkit.command.*;
-import org.celeria.minecraft.guice.BukkitPlugin;
-import org.celeria.minecraft.guice.PluginVersion;
-import org.celeria.minecraft.guice.TaskScheduler;
+import org.celeria.minecraft.guice.*;
 import org.slf4j.cal10n.LocLogger;
 
 @Immutable
@@ -38,7 +36,6 @@ class Archivist implements BukkitPlugin {
     private final CommandExecutor manualBackUpExecutor;
     private final Runnable cleanBackupsTask;
     private final Runnable backUpTask;
-    private final String version;
     private final long backUpInterval;
 
     @Inject
@@ -47,7 +44,6 @@ class Archivist implements BukkitPlugin {
             final DeleteOldBackupsTask deleteOldBackupsTask,
             final CommandExecutor manualBackUpExecutor,
             final BackUpWorldsTask backUpTask,
-            @PluginVersion final String version,
             @BackUpInterval final long interval) {
         this.log = log;
         this.scheduler = scheduler;
@@ -55,13 +51,12 @@ class Archivist implements BukkitPlugin {
         this.cleanBackupsTask = deleteOldBackupsTask;
         this.manualBackUpExecutor = manualBackUpExecutor;
         this.backUpTask = backUpTask;
-        this.version = version;
         this.backUpInterval = interval;
     }
 
     @Override
     public void run() {
-        log.info(LogMessage.PLUGIN_ENABLED, version);
+        log.info(LogMessage.PLUGIN_ENABLED);
         resetTasks();
         enableManualBackupCommand();
         scheduleTasks();
@@ -80,6 +75,7 @@ class Archivist implements BukkitPlugin {
         scheduleBackUpTask();
     }
 
+    // TODO: create generic task (value) object.
     private void scheduleBackUpCleaner() {
         scheduler.repeatAsynchronousTask(cleanBackupsTask, 2 * backUpInterval);
     }
@@ -92,6 +88,6 @@ class Archivist implements BukkitPlugin {
     @Override
     public void stop() {
         resetTasks();
-        log.info(LogMessage.PLUGIN_DISABLED, version);
+        log.info(LogMessage.PLUGIN_DISABLED);
     }
 }

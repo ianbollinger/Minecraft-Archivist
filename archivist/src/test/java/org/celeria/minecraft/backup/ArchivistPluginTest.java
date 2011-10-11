@@ -18,7 +18,6 @@ package org.celeria.minecraft.backup;
 
 import static org.mockito.Mockito.*;
 import java.io.*;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.URL;
 import com.google.common.base.Charsets;

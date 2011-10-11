@@ -109,15 +109,15 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
         }
     }
 
-    private ZipOutputStream archiveFor(final World world,
+    private Archive archiveFor(final World world,
             final FileSystemManager fileSystem) {
         return archiveFor(fileFor(world, fileSystem));
     }
 
-    private ZipOutputStream archiveFor(final FileObject file) {
+    private Archive archiveFor(final FileObject file) {
         final ZipOutputStream stream = zipStreamFor(file);
         stream.setLevel(compressionLevel.asInteger());
-        return stream;
+        return new Archive(log, stream);
     }
 
     private FileObject fileFor(final World world,

@@ -20,9 +20,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.io.*;
 import java.lang.annotation.*;
-import java.util.zip.*;
 import javax.annotation.concurrent.Immutable;
-import com.google.common.io.ByteStreams;
 import com.google.inject.*;
 import org.apache.commons.vfs2.*;
 import org.bukkit.World;
@@ -41,18 +39,18 @@ class ArchiveWorldTask implements WorldTask {
     private final World world;
     private final FileObject worldFolder;
     private final FileObject temporaryWorldFolder;
-    private final ZipOutputStream archive;
+    private final Archive archive;
 
     @Inject
     ArchiveWorldTask(final LocLogger log,
             @WorldFolder final FileObject worldFolder,
             @TemporaryWorldFolder final FileObject temporaryWorldFolder,
-            final ZipOutputStream archive, final World world) {
+            final Archive archiver, final World world) {
         this.log = log;
         this.world = world;
         this.worldFolder = worldFolder;
         this.temporaryWorldFolder = temporaryWorldFolder;
-        this.archive = archive;
+        this.archive = archiver;
     }
 
     @Override
@@ -62,8 +60,8 @@ class ArchiveWorldTask implements WorldTask {
         } catch (final WorldTaskException e) {
             log.error(ErrorMessage.TASK_FAILED, e.getCause());
         } finally {
-            // TODO: this doesn't seem appropriate, unless I *get* the archive.
-            close(archive);
+            // TODO: this doesn't seem appropriate, unless I *get* the archiver.
+            archive.close();
         }
     }
 
@@ -140,9 +138,13 @@ class ArchiveWorldTask implements WorldTask {
 
     private void archiveFile(final FileObject baseFolder,
             final FileObject file) {
-        final FileContent content = contentOf(file);
-        final ZipEntry entry = archiveEntryFor(file, baseFolder, content);
-        createArchiveEntry(entry, content);
+        final String name = relativeNameOf(file.getName(),
+                baseFolder.getName());
+        try {
+            archive.write(name, contentOf(file));
+        } catch (final ArchiveException e){
+            throw new WorldTaskException(e);
+        }
     }
 
     private boolean isFolder(final FileObject file) {
@@ -157,37 +159,6 @@ class ArchiveWorldTask implements WorldTask {
         }
     }
 
-    private void createArchiveEntry(final ZipEntry entry,
-            final FileContent content) {
-        startArchiveEntry(entry);
-        writeArchiveEntry(content);
-        endArchiveEntry();
-    }
-
-    private ZipEntry archiveEntryFor(final FileObject file,
-            final FileObject baseFolder, final FileContent content) {
-        final String name = relativeNameOf(file.getName(),
-                baseFolder.getName());
-        final ZipEntry archiveEntry = archiveEntryFor(name, content);
-        return archiveEntry;
-    }
-
-    private ZipEntry archiveEntryFor(final String name,
-            final FileContent content) {
-        final ZipEntry entry = new ZipEntry(name);
-        entry.setTime(timeLastModifiedOf(content));
-        return entry;
-    }
-
-    private void writeArchiveEntry(final FileContent content) {
-        final InputStream input = inputStreamFrom(content);
-        try {
-            copyStream(input, archive);
-        } finally {
-            close(input);
-        }
-    }
-
     private String relativeNameOf(final FileName name,
             final FileName baseFolderName) {
         try {
@@ -197,65 +168,11 @@ class ArchiveWorldTask implements WorldTask {
         }
     }
 
-    private long timeLastModifiedOf(final FileContent content) {
-        try {
-            return content.getLastModifiedTime();
-        } catch (final IOException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FILE,
-                    content.getFile());
-        }
-    }
-
-    private void startArchiveEntry(final ZipEntry entry) {
-        try {
-            archive.putNextEntry(entry);
-        } catch (final ZipException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
-        } catch (final IOException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
-        }
-    }
-
     private FileContent contentOf(final FileObject source) {
         try {
             return source.getContent();
         } catch (final FileSystemException e) {
             throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FILE, source);
-        }
-    }
-
-    private InputStream inputStreamFrom(final FileContent content) {
-        try {
-            return content.getInputStream();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_OPEN_FILE_FOR_READING,
-                    content.getFile());
-        }
-    }
-
-    public void copyStream(final InputStream input, final OutputStream output) {
-        try {
-            ByteStreams.copy(input, output);
-        } catch (final IOException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
-        }
-    }
-
-    private void close(final Closeable input) {
-        try {
-            input.close();
-        } catch (final IOException e) {
-            log.warn(ErrorMessage.CANNOT_CREATE_TEMPORARY_FOLDER);
-        }
-    }
-
-    private void endArchiveEntry() {
-        try {
-            archive.closeEntry();
-        } catch (final ZipException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
-        } catch (final IOException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_WRITE_TO_ARCHIVE);
         }
     }
 

@@ -51,11 +51,6 @@ public final class BukkitPluginModule extends AbstractModule {
         bind(PluginManager.class).toInstance(server.getPluginManager());
     }
 
-    @Provides @PluginVersion @Singleton
-    public String providesVersion() {
-        return plugin.getDescription().getVersion();
-    }
-
     @Provides @Singleton
     public Configuration providesConfiguration() {
         final Configuration configuration = plugin.getConfiguration();

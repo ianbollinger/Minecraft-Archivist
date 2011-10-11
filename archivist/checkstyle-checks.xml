@@ -236,11 +236,11 @@
 
     <!-- size violations =================================================== -->
     <module name="AnonInnerLength">
-      <property name="max" value="3"/>
+      <property name="max" value="4"/>
     </module>
     <module name="ExecutableStatementCount">
       <property name="severity" value="info"/>
-      <property name="max" value="3"/>
+      <property name="max" value="4"/>
       <property name="tokens" value="METHOD_DEF,STATIC_INIT"/>
     </module>
     <module name="LineLength"/>
@@ -305,7 +305,7 @@
   </module>
 
   <module name="FileLength">
-    <property name="max" value="300"/>
+    <property name="max" value="200"/>
   </module>
 
   <module name="FileTabCharacter">
