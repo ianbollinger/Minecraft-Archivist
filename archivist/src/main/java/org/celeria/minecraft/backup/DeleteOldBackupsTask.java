@@ -32,10 +32,8 @@ class DeleteOldBackupsTask implements Runnable {
 
     @Inject
     DeleteOldBackupsTask(final LocLogger log,
-            @BackupFolder
-            final FileProvider<FileObject> backupFolderProvider,
-            final Duration durationToKeepBackups,
-            final Instant currentTime) {
+            @BackupFolder final FileProvider<FileObject> backupFolderProvider,
+            final Duration durationToKeepBackups, final Instant currentTime) {
         this.log = log;
         this.backupFolderProvider = backupFolderProvider;
         this.durationToKeepBackups = durationToKeepBackups;
@@ -44,27 +42,27 @@ class DeleteOldBackupsTask implements Runnable {
 
     @Override
     public void run() {
+        try {
+            deleteOldBackups();
+        } catch (final FileSystemException e) {
+            log.error(ErrorMessage.CANNOT_ACCESS_BACKUP, e);
+        }
+    }
+
+    private void deleteOldBackups() throws FileSystemException {
         for (final FileObject backup : getBackupFolderContents()) {
             deleteBackupIfOld(backup);
         }
     }
 
-    private FileObject[] getBackupFolderContents() {
-        try {
-            return backupFolderProvider.get().getChildren();
-        } catch (final FileSystemException e) {
-            log.error(ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER);
-            return new FileObject[] {};
-        }
+    private FileObject[] getBackupFolderContents() throws FileSystemException {
+        return backupFolderProvider.get().getChildren();
     }
 
-    private void deleteBackupIfOld(final FileObject backup) {
-        try {
-            if (backupIsOld(backup)) {
-                deleteBackup(backup);
-            }
-        } catch (final FileSystemException e) {
-            log.error(ErrorMessage.CANNOT_ACCESS_BACKUP, backup);
+    private void deleteBackupIfOld(final FileObject backup)
+            throws FileSystemException {
+        if (backupIsOld(backup)) {
+            deleteBackup(backup);
         }
     }
 
@@ -75,12 +73,10 @@ class DeleteOldBackupsTask implements Runnable {
         return currentTime.plus(durationToKeepBackups).isAfter(instant);
     }
 
-    private void deleteBackup(final FileObject backup) {
-        try {
-            backup.delete();
-            log.info(LogMessage.DELETED_BACKUP, backup);
-        } catch (final FileSystemException e) {
-            log.warn(ErrorMessage.CANNOT_DELETE_BACKUP, backup);
-        }
+    private void deleteBackup(final FileObject backup)
+            throws FileSystemException {
+        // TODO: try to move this further up the application stack.
+        backup.delete();
+        log.info(LogMessage.DELETED_BACKUP, backup.getName().getBaseName());
     }
 }

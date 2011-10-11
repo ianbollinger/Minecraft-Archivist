@@ -16,6 +16,7 @@
 
 package org.celeria.minecraft.backup;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import com.google.inject.Inject;
 import org.apache.commons.vfs2.*;
@@ -40,7 +41,6 @@ public class TemporaryFolderProviderTest {
 
     @Test
     public void testGet() throws Exception {
-        provider.get();
-        // TODO: verify something.
+        assertSame(file, provider.get());
     }
 }

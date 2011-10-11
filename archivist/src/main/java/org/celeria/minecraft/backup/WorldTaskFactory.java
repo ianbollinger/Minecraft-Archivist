@@ -16,8 +16,9 @@
 
 package org.celeria.minecraft.backup;
 
+import java.io.IOException;
 import org.bukkit.World;
 
 interface WorldTaskFactory {
-    WorldTask create(World world);
+    WorldTask create(World world) throws IOException;
 }

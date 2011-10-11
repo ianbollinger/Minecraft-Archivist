@@ -16,8 +16,12 @@
 
 package org.celeria.minecraft.backup;
 
+import static org.junit.Assert.*;
 import com.google.inject.Inject;
 import org.bukkit.Server;
+import org.bukkit.command.PluginCommand;
+import org.joda.time.Instant;
+import org.joda.time.format.DateTimeFormatter;
 import org.jukito.JukitoRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,19 +32,24 @@ public class ArchivistModuleTest {
 
     @Test
     public void testProvidePluginCommand(final Server server) {
-        module.providePluginCommand(server);
-        // TODO: verify something.
+        final PluginCommand pluginCommand = module.providePluginCommand(server);
+        // assertEquals("backup", pluginCommand.getName());
+        // TODO: verify somrthing.
     }
 
     @Test
-    public void testProvideDateTimeFormater() {
-        module.provideDateTimeFormater();
+    public void testProvideDateTimeFormatter() {
+        @SuppressWarnings("unused")
+        final DateTimeFormatter dateTimeFormatter = module.provideDateTimeFormatter();
         // TODO: verify something.
     }
 
     @Test
     public void testProvideCurrentTime() {
-        module.provideCurrentTime();
-        // TODO: verify something.
+        final Instant before = Instant.now();
+        final Instant currentTime = module.provideCurrentTime();
+        final Instant after = Instant.now();
+        assertTrue(currentTime.equals(before) || currentTime.isAfter(before));
+        assertTrue(currentTime.equals(after) || currentTime.isBefore(after));
     }
 }

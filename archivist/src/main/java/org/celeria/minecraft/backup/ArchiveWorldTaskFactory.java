@@ -58,117 +58,59 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
     }
 
     @Override
-    public WorldTask create(final World world) {
+    public WorldTask create(final World world) throws IOException {
         final String worldName = world.getName();
-        final FileSystemManager fileSystem = getFileSystemManager();
-        final FileObject worldFolder = folderFor(worldName, fileSystem);
-        return new ArchiveWorldTask(log, worldFolder,
-                temporaryWorldFolderFor(worldName, fileSystem),
-                archiveFor(world, fileSystem),
-                world);
+        // TODO: it would be nice if we could just "get" this damn thing once
+        // and be done with it.
+        final FileSystemManager fileSystem = fileSystemProvider.get();
+        final FileObject worldFolder = fileSystem.resolveFile(worldName);
+        final FileObject temporaryFolder = temporaryFolderFor(worldName,
+                fileSystem);
+        final Archive archive = archiveFor(world, fileSystem);
+        return new ArchiveWorldTask(log, worldFolder, temporaryFolder,
+                archive, world);
     }
 
-    private FileObject temporaryWorldFolderFor(final String worldName,
-            final FileSystemManager fileSystem) {
-        return resolveFile(worldName, getTemporaryFolder(), fileSystem);
-    }
-
-    // TODO: it would be nice if we could just "get" this damn thing once
-    // and be done with it.
-    private FileSystemManager getFileSystemManager() {
-        try {
-            return fileSystemProvider.get();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FILE_SYSTEM);
-        }
-    }
-
-    private FileObject getTemporaryFolder() {
-        try {
-            return temporaryFolderProvider.get();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_TEMPORARY_FOLDER);
-        }
-    }
-
-    private FileObject folderFor(final String name,
-            final FileSystemManager fileSystem) {
-        try {
-            return fileSystem.resolveFile(name);
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.INVALID_FILE_NAME, name);
-        }
-    }
-
-    private FileObject resolveFile(final String name, final FileObject path,
-            final FileSystemManager fileSystem) {
-        try {
-            return fileSystem.resolveFile(path, name);
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.INVALID_FILE_NAME, name);
-        }
+    private FileObject temporaryFolderFor(final String worldName,
+            final FileSystemManager fileSystem) throws FileSystemException {
+        return fileSystem.resolveFile(temporaryFolderProvider.get(), worldName);
     }
 
     private Archive archiveFor(final World world,
-            final FileSystemManager fileSystem) {
+            final FileSystemManager fileSystem) throws FileSystemException {
         return archiveFor(fileFor(world, fileSystem));
     }
 
-    private Archive archiveFor(final FileObject file) {
+    private Archive archiveFor(final FileObject file)
+            throws FileSystemException {
         final ZipOutputStream stream = zipStreamFor(file);
         stream.setLevel(compressionLevel.asInteger());
-        return new Archive(log, stream);
+        return new Archive(stream);
     }
 
     private FileObject fileFor(final World world,
-            final FileSystemManager fileSystem) {
-        final String fileName = fileNameFor(world);
-        return resolveFile(fileName, getBackupFolder(), fileSystem);
+            final FileSystemManager fileSystem) throws FileSystemException {
+        return fileSystem.resolveFile(getBackupFolder(), fileNameFor(world));
     }
 
-    private ZipOutputStream zipStreamFor(final FileObject archiveFile) {
+    private ZipOutputStream zipStreamFor(final FileObject archiveFile)
+            throws FileSystemException {
         final OutputStream checkedStream = new CheckedOutputStream(
                 streamFor(archiveFile), checksum);
-        final OutputStream bufferedStream = new BufferedOutputStream(
-                checkedStream);
-        return new ZipOutputStream(bufferedStream);
+        return new ZipOutputStream(new BufferedOutputStream(checkedStream));
     }
 
-    private FileObject getBackupFolder() {
-        try {
-            return backupFolderProvider.get();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_BACKUP_FOLDER);
-        }
+    private FileObject getBackupFolder() throws FileSystemException {
+        return backupFolderProvider.get();
     }
 
     private String fileNameFor(final World world) {
-        return world.getName() + "_"
-                + dateTimeFormatter.print(DateTime.now()) + ".zip";
+        return world.getName() + "_" + dateTimeFormatter.print(DateTime.now())
+                + ".zip";
     }
 
-    private OutputStream streamFor(final FileObject file) {
-        try {
-            return contentOf(file).getOutputStream();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING,
-                    file);
-        }
-    }
-
-    private FileContent contentOf(final FileObject file) {
-        try {
-            return file.getContent();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_OPEN_FILE_FOR_WRITING,
-                    file);
-        }
-    }
-
-    // TODO: this code is duplicated. Subclass LocLogger at some point.
-    private RuntimeException afterLogging(final Throwable e,
-            final ErrorMessage message, final Object... args) {
-        log.error(message, args);
-        throw new WorldTaskException(e);
+    private OutputStream streamFor(final FileObject file)
+            throws FileSystemException {
+        return file.getContent().getOutputStream();
     }
 }

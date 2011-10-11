@@ -37,7 +37,7 @@ public class BackUpWorldsTaskTest {
     @Inject private WorldTask worldTask;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         when(worldTaskFactory.create(Matchers.<World>any())).thenReturn(
                 worldTask);
         when(worlds.iterator()).thenReturn(

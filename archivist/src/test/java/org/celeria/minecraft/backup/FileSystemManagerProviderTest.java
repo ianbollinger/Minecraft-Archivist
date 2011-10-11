@@ -17,6 +17,7 @@
 package org.celeria.minecraft.backup;
 
 import com.google.inject.Inject;
+import org.apache.commons.vfs2.FileSystemManager;
 import org.jukito.JukitoRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,8 @@ public class FileSystemManagerProviderTest {
 
     @Test
     public void testGet() throws Exception {
-        provider.get();
+        @SuppressWarnings("unused")
+        final FileSystemManager fileSystemManager = provider.get();
         // TODO: verify something.
     }
 }

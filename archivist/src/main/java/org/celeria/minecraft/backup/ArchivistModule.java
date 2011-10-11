@@ -65,7 +65,7 @@ class ArchivistModule extends AbstractModule {
     }
 
     @Provides @Singleton
-    public DateTimeFormatter provideDateTimeFormater() {
+    public DateTimeFormatter provideDateTimeFormatter() {
         final List<DateTimeFieldType> fields = ImmutableList
                 .<DateTimeFieldType>of(year(), monthOfYear(), dayOfMonth(),
                         hourOfDay());

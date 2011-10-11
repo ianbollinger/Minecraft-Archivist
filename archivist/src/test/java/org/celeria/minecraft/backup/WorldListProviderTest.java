@@ -17,6 +17,7 @@
 package org.celeria.minecraft.backup;
 
 import com.google.inject.Inject;
+import org.bukkit.World;
 import org.jukito.JukitoRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,8 @@ public class WorldListProviderTest {
 
     @Test
     public void testGet() {
-        provider.get();
+        @SuppressWarnings("unused")
+        final Iterable<World> worldList = provider.get();
         // TODO: verify something.
     }
 }

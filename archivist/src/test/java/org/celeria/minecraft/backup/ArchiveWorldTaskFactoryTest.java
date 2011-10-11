@@ -50,7 +50,7 @@ public class ArchiveWorldTaskFactoryTest {
     }
 
     @Test
-    public void testCreate(final World world) {
+    public void testCreate(final World world) throws Exception {
         factory.create(world);
         // TODO: verify something!
     }

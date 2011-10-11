@@ -57,83 +57,64 @@ class ArchiveWorldTask implements WorldTask {
     public final void run() {
         try {
             archiveWorld();
-        } catch (final WorldTaskException e) {
-            log.error(ErrorMessage.TASK_FAILED, e.getCause());
+        } catch (final IOException e) {
+            log.error(ErrorMessage.TASK_FAILED, e);
         } finally {
-            try {
-                // TODO: this doesn't seem appropriate, unless I *get* the
-                // archiver.
-                archive.close();
-            } catch (final IOException e) {
-                log.warn(ErrorMessage.CANNOT_CLOSE_ARCHIVE);
-            }
+            closeArchive();
         }
     }
 
-    private void archiveWorld() {
+    private void closeArchive() {
+        try {
+            // TODO: this doesn't seem appropriate, unless I *get* the
+            // archiver.
+            archive.close();
+        } catch (final ArchiveException e) {
+            log.warn(ErrorMessage.CANNOT_CLOSE_ARCHIVE);
+        }
+    }
+
+    private void archiveWorld() throws IOException {
         createTemporaryFolder();
         saveAndCopyWorld();
         archiveCopiedWorld();
         deleteCopiedWorld();
     }
 
-    private void saveAndCopyWorld() {
+    private void saveAndCopyWorld() throws FileSystemException {
         world.setAutoSave(false);
         world.save();
         copyWorldToTemporaryFolder();
         world.setAutoSave(true);
     }
 
-    private void createTemporaryFolder() {
-        try {
-            temporaryWorldFolder.createFolder();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_CREATE_TEMPORARY_FOLDER,
-                    temporaryWorldFolder);
-        }
+    private void createTemporaryFolder() throws FileSystemException {
+        temporaryWorldFolder.createFolder();
     }
 
-    private void copyWorldToTemporaryFolder() {
-        try {
-            temporaryWorldFolder.copyFrom(worldFolder, Selectors.SELECT_ALL);
-        } catch (final IOException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_COPY_WORLD,
-                    temporaryWorldFolder, worldFolder);
-        }
+    private void copyWorldToTemporaryFolder() throws FileSystemException {
+        temporaryWorldFolder.copyFrom(worldFolder, Selectors.SELECT_ALL);
     }
 
-    private void archiveCopiedWorld() {
+    private void archiveCopiedWorld() throws IOException {
         archiveFolder(temporaryWorldFolder, temporaryWorldFolder);
     }
 
-    private void deleteCopiedWorld() {
-        try {
-            // TODO: do I really need to call both of these?
-            temporaryWorldFolder.delete(Selectors.SELECT_ALL);
-            temporaryWorldFolder.delete();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_DELETE_TEMPORARY_FOLDER,
-                    temporaryWorldFolder);
-        }
+    private void deleteCopiedWorld() throws FileSystemException {
+        // TODO: do I really need to call both of these?
+        temporaryWorldFolder.delete(Selectors.SELECT_ALL);
+        temporaryWorldFolder.delete();
     }
 
     private void archiveFolder(final FileObject baseFolder,
-            final FileObject folder) {
-        for (final FileObject file : childrenOf(folder)) {
+            final FileObject folder) throws IOException {
+        for (final FileObject file : folder.getChildren()) {
             archiveFileOrFolder(baseFolder, file);
         }
     }
 
-    private FileObject[] childrenOf(final FileObject folder) {
-        try {
-            return folder.getChildren();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FOLDER, folder);
-        }
-    }
-
     private void archiveFileOrFolder(final FileObject baseFolder,
-            final FileObject file) {
+            final FileObject file) throws IOException {
         if (isFolder(file)) {
             archiveFolder(baseFolder, file);
             return;
@@ -141,49 +122,17 @@ class ArchiveWorldTask implements WorldTask {
         archiveFile(baseFolder, file);
     }
 
+    private boolean isFolder(final FileObject file) throws FileSystemException {
+        return file.getType().equals(FileType.FOLDER);
+    }
+
     private void archiveFile(final FileObject baseFolder,
-            final FileObject file) {
-        final String name = relativeNameOf(file.getName(),
-                baseFolder.getName());
-        try {
-            archive.write(name, contentOf(file));
-        } catch (final ArchiveException e){
-            throw new WorldTaskException(e);
-        }
+            final FileObject file) throws IOException {
+        archive.write(relativeNameOf(baseFolder, file), file.getContent());
     }
 
-    private boolean isFolder(final FileObject file) {
-        return typeOf(file).equals(FileType.FOLDER);
-    }
-
-    private FileType typeOf(final FileObject file) {
-        try {
-            return file.getType();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_DETERMINE_FILE_TYPE);
-        }
-    }
-
-    private String relativeNameOf(final FileName name,
-            final FileName baseFolderName) {
-        try {
-            return baseFolderName.getRelativeName(name);
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FILE, name);
-        }
-    }
-
-    private FileContent contentOf(final FileObject source) {
-        try {
-            return source.getContent();
-        } catch (final FileSystemException e) {
-            throw afterLogging(e, ErrorMessage.CANNOT_ACCESS_FILE, source);
-        }
-    }
-
-    private RuntimeException afterLogging(final Throwable e,
-            final ErrorMessage message, final Object... args) {
-        log.error(message, args);
-        throw new WorldTaskException(e);
+    private String relativeNameOf(final FileObject baseFolder,
+            final FileObject file) throws FileSystemException {
+        return baseFolder.getName().getRelativeName(file.getName());
     }
 }

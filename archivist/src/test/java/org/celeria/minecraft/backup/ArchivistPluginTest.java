@@ -60,12 +60,13 @@ public class ArchivistPluginTest {
 
     @Before
     public void setUpConfiguration(final Configuration configuration)
-            throws Exception{
+            throws Exception {
         when(configuration.getString(anyString(), anyString()))
                 .thenReturn(CompressionLevel.DEFAULT.toString());
         when(configuration.getString(eq("back-up-period"), anyString()))
                 .thenReturn("PT20M");
-        when(configuration.getString(eq("duration-to-keep-backups"), anyString()))
+        when(configuration.getString(
+                eq("duration-to-keep-backups"), anyString()))
                 .thenReturn("PT900S");
         setFieldTo(plugin, "config", configuration);
     }

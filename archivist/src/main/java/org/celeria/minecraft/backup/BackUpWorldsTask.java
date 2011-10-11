@@ -18,6 +18,7 @@ package org.celeria.minecraft.backup;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.io.IOException;
 import java.lang.annotation.*;
 import javax.annotation.concurrent.Immutable;
 import com.google.inject.*;
@@ -82,8 +83,8 @@ class BackUpWorldsTask implements Runnable {
         log.info(LogMessage.BACKING_UP_WORLD, world.getName());
         try {
             scheduler.runAsynchronousTask(worldTaskFactory.create(world));
-        } catch (final WorldTaskException e) {
-            return;
+        } catch (final IOException e) {
+            log.error(ErrorMessage.TASK_FAILED, e);
         }
     }
 }
