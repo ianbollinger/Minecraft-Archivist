@@ -60,15 +60,11 @@ class ArchiveWorldTaskFactory implements WorldTaskFactory {
     @Override
     public WorldTask create(final World world) throws IOException {
         final String worldName = world.getName();
-        // TODO: it would be nice if we could just "get" this damn thing once
-        // and be done with it.
         final FileSystemManager fileSystem = fileSystemProvider.get();
         final FileObject worldFolder = fileSystem.resolveFile(worldName);
-        final FileObject temporaryFolder = temporaryFolderFor(worldName,
-                fileSystem);
-        final Archive archive = archiveFor(world, fileSystem);
-        return new ArchiveWorldTask(log, worldFolder, temporaryFolder,
-                archive, world);
+        return new ArchiveWorldTask(log, worldFolder,
+                temporaryFolderFor(worldName, fileSystem),
+                archiveFor(world, fileSystem), world);
     }
 
     private FileObject temporaryFolderFor(final String worldName,

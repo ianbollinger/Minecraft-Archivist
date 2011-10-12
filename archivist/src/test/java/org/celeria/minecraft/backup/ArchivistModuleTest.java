@@ -32,9 +32,10 @@ public class ArchivistModuleTest {
 
     @Test
     public void testProvidePluginCommand(final Server server) {
+        @SuppressWarnings("unused")
         final PluginCommand pluginCommand = module.providePluginCommand(server);
         // assertEquals("backup", pluginCommand.getName());
-        // TODO: verify somrthing.
+        // TODO: verify something.
     }
 
     @Test

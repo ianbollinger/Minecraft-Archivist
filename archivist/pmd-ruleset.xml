@@ -20,14 +20,17 @@
     xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
     xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
 
-  <description>PMD static analysis rule set for nomegen</description>
+  <description>PMD static analysis rule set</description>
 
     <rule ref="rulesets/basic.xml"/>
     <rule ref="rulesets/braces.xml"/>
     <rule ref="rulesets/clone.xml"/>
-    <rule ref="rulesets/codesize.xml"/>
+    <rule ref="rulesets/codesize.xml">
+      <properties>
+        <property name="maxmethods" value="20"/>
+      </properties>
+    </rule>
     <rule ref="rulesets/controversial.xml">
-
       <exclude name="AvoidFinalLocalVariable"/>
       <exclude name="CallSuperInConstructor"/>
       <exclude name="DataflowAnomalyAnalysis"/>

@@ -44,12 +44,17 @@ class Archive implements Closeable {
     public void write(final String name, final FileContent content)
             throws ArchiveException {
         try {
-            output.putNextEntry(entryFor(name, content));
-            writeEntry(content);
-            output.closeEntry();
+            writeEntry(name, content);
         } catch (final IOException e) {
             throw new ArchiveException("Could not write file to archive.", e);
         }
+    }
+
+    private void writeEntry(final String name, final FileContent content)
+            throws IOException {
+        output.putNextEntry(entryFor(name, content));
+        writeToEntry(content);
+        output.closeEntry();
     }
 
     private ZipEntry entryFor(final String name, final FileContent content)
@@ -59,7 +64,7 @@ class Archive implements Closeable {
         return entry;
     }
 
-    private void writeEntry(final FileContent content) throws IOException {
+    private void writeToEntry(final FileContent content) throws IOException {
         final InputStream input = inputStreamFrom(content);
         boolean threw = true;
         try {
